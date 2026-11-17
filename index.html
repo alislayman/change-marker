@@ -2943,7 +2943,8 @@ async function bringBack() {
 $('btnHelp').addEventListener('click', () => $('help').showModal());
 $('btnHelpClose').addEventListener('click', () => $('help').close());
 function applyTheme(t) { if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; }
-try { applyTheme(localStorage.getItem('change-marker:theme') || ''); } catch (e) { /* storage blocked */ }
+// Light unless the dark button was pressed: the workshop shares this screen on a whiteboard (15 November 2026).
+try { applyTheme(localStorage.getItem('change-marker:theme') || 'light'); } catch (e) { applyTheme('light'); }
 $('btnTheme').addEventListener('click', () => {
   const dark = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
   const t = dark ? 'light' : 'dark'; applyTheme(t); try { localStorage.setItem('change-marker:theme', t); } catch (e) { /* blocked */ }
