@@ -115,10 +115,10 @@ input.need { border-color: var(--warn-ink); background: var(--warn-bg); }
 .pins .err { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
 .pinnum { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 4px; background: #00bcd4; color: #002b31; font-weight: 700; font-size: 11px; }
 .marks { margin-top: 6px; }
-.mark { display: grid; grid-template-columns: 16px 34px 1fr auto; gap: 6px; align-items: center; padding: 4px 6px; border-radius: 6px; cursor: pointer; font-size: 12.5px; }
+.mark { display: grid; grid-template-columns: 16px minmax(34px, max-content) minmax(0, 1fr) auto; gap: 6px; align-items: center; padding: 4px 6px; border-radius: 6px; cursor: pointer; font-size: 12.5px; }
 .mark:hover { background: var(--panel-2); }
 .mark.sel { background: var(--accent-2); }
-.mark .lbl { font-weight: 700; font-variant-numeric: tabular-nums; }
+.mark .lbl { font-weight: 700; font-variant-numeric: tabular-nums; max-width: 10em; overflow-wrap: anywhere; }
 .mark .ms { color: var(--muted); font-size: 12px; white-space: nowrap; }
 .mark .nt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .totals { width: 100%; border-collapse: collapse; font-size: 12.5px; }
@@ -160,16 +160,19 @@ body[data-layout="one"] #panelB { display: none; }
 dialog { border: 1px solid var(--border); border-radius: 12px; background: var(--panel); color: var(--text); max-width: 720px; width: calc(100vw - 32px); padding: 18px 22px; }
 dialog::backdrop { background: rgba(0,0,0,.45); }
 dialog h2 { margin: 0 0 8px; font-size: 18px; }
+#helpTitle:focus { outline: none; }   /* the help opens at its title (focused so that it opens there), which is not a control */
 dialog h3 { margin: 14px 0 4px; font-size: 14px; }
 dialog ol, dialog ul { margin: 4px 0; padding-left: 20px; }
 dialog li { margin: 3px 0; }
 kbd { background: var(--chip); border: 1px solid var(--border-2); border-radius: 4px; padding: 0 5px; font-size: 11.5px; font-family: inherit; }
 .foot { margin: 10px 2px 4px; }
+/* A copy with no village pictures: the help leaves out what only village pictures do. */
+.novil { display: none; } body.nopack .vil { display: none; } body.nopack .novil { display: inline; }
 /* A narrow window (half a laptop screen, a tablet, a phone): the pictures come first, the steps below them. */
 @media (max-width: 900px) {
   body { overflow: auto; }
   header { flex-wrap: wrap; row-gap: 4px; }
-  #status { order: 9; flex: 1 1 100%; display: block; -webkit-line-clamp: unset; line-clamp: none; overflow: visible; }
+  #status { order: 9; flex: 1 1 100%; display: block; -webkit-line-clamp: unset; line-clamp: none; overflow: visible; overflow-wrap: anywhere; }
   main { flex-direction: column; }
   #stage { order: -1; flex: none; height: 85vh; min-height: 380px; }
   aside { width: auto; max-height: none; overflow: visible; border-right: none; border-top: 1px solid var(--border); }
@@ -198,6 +201,7 @@ kbd { background: var(--chip); border: 1px solid var(--border-2); border-radius:
 <main>
 <aside id="side">
   <div id="banner" class="note" hidden></div>
+  <div id="keepNote" class="note" hidden>This browser does not keep your marks between visits: its settings block it, or it is full. Use Save work (step 6) before you close the page.</div>
 
   <div id="selBox" class="selbox" hidden>
     <div class="selhead"><span id="selSw"></span><input type="text" id="selLabel" aria-label="Mark ID" title="Its ID: write the same in your sheet"><select id="selClass" aria-label="Kind"></select></div>
@@ -363,17 +367,17 @@ kbd { background: var(--chip); border: 1px solid var(--border-2); border-radius:
 </main>
 
 <dialog id="help" aria-labelledby="helpTitle">
-  <h2 id="helpTitle">How Change Marker works</h2>
+  <h2 id="helpTitle" tabindex="-1" autofocus>How Change Marker works</h2>
   <ol>
-    <li><b>Pictures.</b> Pick a village, a layer and two dates. Or drop your own two pictures of the same place on two dates: screenshots, downloads, or a KMZ.</li>
-    <li><b>Line them up.</b> Our village pictures already are. Your own: press Line up automatically, then check with the Checkerboard view: roads and field edges must run straight across the squares.</li>
-    <li><b>Put on the map.</b> Our village pictures already are. Your own: pin 3 places you can also find on Google Maps, far apart and not in a line.</li>
+    <li><b>Pictures.</b> <span class="vil">Pick a village, a layer and two dates. Or drop</span><span class="novil">Drop</span> your own two pictures of the same place on two dates: screenshots, downloads, or a KMZ.</li>
+    <li><b>Line them up.</b> <span class="vil">Our village pictures already are. Your own: press</span><span class="novil">Press</span> Line up automatically, then check with the Checkerboard view: roads and field edges must run straight across the squares.</li>
+    <li><b>Put on the map.</b> <span class="vil">Our village pictures already are. Your own: pin</span><span class="novil">Pin</span> 3 places you can also find on Google Maps, far apart and not in a line.</li>
     <li><b>Compare.</b> Side by side, Swipe (drag the divider), Blink, Fade or Checkerboard.</li>
     <li><b>Mark.</b> Pick a kind at the top, then draw: Area, Line (roads and tracks) or Point. Write what you saw.</li>
-    <li><b>Date.</b> With the mark selected, step the After picture back month by month until the change is gone, then forward one: stop on the first picture that shows it and press First seen on this After picture. The tool writes that picture's date and the one before it. With your own pictures, Use the dates on screen writes the dates under Taken on.</li>
+    <li><b>Date.</b> <span class="vil">With the mark selected, step the After picture back month by month until the change is gone, then forward one: stop on the first picture that shows it and press First seen on this After picture. The tool writes that picture's date and the one before it. With your own pictures, Use</span><span class="novil">With the mark selected, Use</span> the dates on screen writes the dates under Taken on.</li>
     <li><b>Export.</b> KMZ for Google Earth, GeoJSON for geojson.io, and a CSV list of your marks to keep. For the group sheet, Copy for the sheet gives one mark's line to paste in its Shape cell.</li>
   </ol>
-  <p class="hint">Each mark stays on its ground: open another village whose pictures cover the same place and the mark is shown there too. A mark on pictures that are not on the map shows only on its own pictures.</p>
+  <p class="hint"><span class="vil">Each mark stays on its ground: open another village whose pictures cover the same place and the mark is shown there too. </span>A mark on pictures that are not on the map shows only on its own pictures.</p>
   <h3>What the layers show</h3>
   <ul>
     <li><b>True colour:</b> as the eye sees it. Best for buildings, roads and bare ground.</li>
@@ -643,7 +647,9 @@ kbd { background: var(--chip); border: 1px solid var(--border-2); border-radius:
     const mask = new Uint8Array(n); const vd = valid.data;
     const rx0 = roi ? Math.max(0, roi.x | 0) : 0, ry0 = roi ? Math.max(0, roi.y | 0) : 0;
     const rx1 = roi ? Math.min(w, (roi.x + roi.w) | 0) : w, ry1 = roi ? Math.min(h, (roi.y + roi.h) | 0) : h;
-    for (let y = ry0; y < ry1; y++) for (let x = rx0; x < rx1; x++) { const i = y * w + x; if (vd[i]) mask[i] = 1; }
+    // Pure black is no data (a swath edge, a viewer's empty tile), never ground: it is left out, like the warp's empty border.
+    const bd0 = beforeRGBA.data, ad0 = afterRGBA.data, dark = (d, o) => d[o] + d[o + 1] + d[o + 2] <= 6;
+    for (let y = ry0; y < ry1; y++) for (let x = rx0; x < rx1; x++) { const i = y * w + x; if (vd[i] && !dark(bd0, 4 * i) && !dark(ad0, 4 * i)) mask[i] = 1; }
     const C = P.classes;
     const features = [], markers = [];
     function extract(binary, cls, allowMarkers, allowPolys) {
@@ -668,7 +674,8 @@ kbd { background: var(--chip); border: 1px solid var(--border-2); border-radius:
           if (area >= P.minArea) {
             const ap = new cv.Mat(); cv.approxPolyDP(c, ap, P.epsilon, true);
             const pts = []; for (let j = 0; j < ap.rows; j++) pts.push([ap.intAt(j, 0), ap.intAt(j, 1)]);
-            if (pts.length >= 3) features.push({ cls, pts, area: Math.round(area) });
+            const kept = cv.contourArea(ap);   // the simplified outline a draft keeps is smaller than the traced one: Smallest change holds for it
+            if (pts.length >= 3 && kept >= P.minArea) features.push({ cls, pts, area: Math.round(kept) });
             ap.delete();
           }
           c.delete();
@@ -832,7 +839,7 @@ window.GeoKit = (function () {
     return null;
   }
   // KML text
-  function xmlEsc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+  function xmlEsc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])).replace(/[\u000B\u000C]/g, '\n').replace(/[\u0000-\u0008\u000E-\u001F\uFFFE\uFFFF]/g, ''); }
   function cdata(s) { return '<![CDATA[' + String(s).replace(/\]\]>/g, ']]]]><![CDATA[>') + ']]>'; }
   function kmlColor(hex, alpha) { const n = hex.replace('#', ''); const a = Math.round(Math.max(0, Math.min(1, alpha)) * 255).toString(16).padStart(2, '0'); return (a + n.slice(4, 6) + n.slice(2, 4) + n.slice(0, 2)).toLowerCase(); }
   function kmlGeom(g) {
@@ -927,14 +934,14 @@ const tick = () => new Promise(r => setTimeout(r, 30));
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 function fmt(v, d) { const k = Math.pow(10, d === undefined ? 1 : d); return (Math.round(v * k) / k).toString(); }
 function num(v, d) { return Number(v).toLocaleString('en-GB', { minimumFractionDigits: d, maximumFractionDigits: d }); }
-function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])).replace(/[\u000B\u000C]/g, '\n').replace(/[\u0000-\u0008\u000E-\u001F\uFFFE\uFFFF]/g, ''); }   // XML 1.0 forbids these control characters (KML, SVG)
 function hexToRgba(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; }
 function download(name, blob) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000); }
-function safeName(s) { return String(s || 'marks').normalize('NFKD').replace(/[^\w.-]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 60) || 'marks'; }
+function safeName(s) { return String(s || 'marks').normalize('NFKC').replace(/[^\p{L}\p{M}\p{N}_.-]+/gu, '_').replace(/^_+|_+$/g, '').slice(0, 60) || 'marks'; }
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 function niceDate(d) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || ''); return m ? `${+m[3]} ${MONTHS[+m[2] - 1]} ${m[1]}` : (d || ''); }
 function isDate(d) { return /^\d{4}-\d{2}-\d{2}$/.test(d || ''); }
-function cleanDate(t) { const m = /(\d{4})[-./]?(\d{2})[-./]?(\d{2})/.exec(String(t || '')); if (!m) return ''; const y = +m[1], mo = +m[2], d = +m[3]; return (y > 1980 && y < 2100 && mo >= 1 && mo <= 12 && d >= 1 && d <= 31) ? `${m[1]}-${m[2]}-${m[3]}` : ''; }
+function cleanDate(t) { const m = /(\d{4})[-./]?(\d{2})[-./]?(\d{2})/.exec(String(t || '')); if (!m) return ''; const y = +m[1], mo = +m[2], d = +m[3]; return (y > 1980 && y < 2100 && mo >= 1 && mo <= 12 && d >= 1 && d <= new Date(Date.UTC(y, mo, 0)).getUTCDate()) ? `${m[1]}-${m[2]}-${m[3]}` : ''; }
 function r6(v) { return Math.round(v * 1e6) / 1e6; }
 async function copyText(text) {
   try { if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; } } catch (e) { /* fall back below */ }
@@ -1045,7 +1052,8 @@ S.classes = kindsOf('workshop');
 function getClass(id) { return S.classes.find(c => c.id === id) || (AUTO_CLASSES[id] ? Object.assign({ id, prefix: 'A', tab: '' }, AUTO_CLASSES[id]) : S.classes[0]); }
 function ensureAutoClasses() { for (const id in AUTO_CLASSES) if (!S.classes.find(c => c.id === id)) S.classes.push(Object.assign({ id, prefix: 'A', tab: '' }, AUTO_CLASSES[id])); }
 // The next free ID of a kind: never one a mark already carries, typed ones included.
-function newLabel(cls) { const pre = getClass(cls).prefix || 'X'; let l; do { S.counters[pre] = (S.counters[pre] || 0) + 1; l = pre + S.counters[pre]; } while (S.shapes.some(s => s.label === l)); return l; }
+function newLabel(cls) { const pre = getClass(cls).prefix || 'X'; let l; do { S.counters[pre] = (S.counters[pre] || 0) + 1; l = pre + S.counters[pre]; } while (S.shapes.some(s => sameId(s.label, l))); return l; }
+function sameId(a, b) { return String(a || '').toLowerCase() === String(b || '').toLowerCase(); }   // the sheet's lookups ignore capitals
 // An ID the tool gave (its kind's letter and a number), as opposed to one the person typed.
 function isToolLabel(sh, cls) {
   if (sh.autoLabel === false) return false;
@@ -1142,8 +1150,10 @@ function llToBpx(ll) { if (S.geo.B) return G.llToPx(S.geo.B, ll); if (S.geo.A &&
 function metresPerPx(p) { const a = bpxToLL(p); if (!a) return null; const b = bpxToLL([p[0] + 1, p[1]]), c = bpxToLL([p[0], p[1] + 1]); return (G.haversine(a, b) + G.haversine(a, c)) / 2; }
 
 /* ---------- pictures ---------- */
-// The placement and line-up of opened saved work wait for the same pictures (same file name and size) and are used once.
-function pendingFits(key, im) { const p = S.pending && S.pending[key]; return !!p && p.name === im.name && p.w === im.w && p.h === im.h; }
+// The placement and line-up of opened saved work wait for the same pictures (same file name, size and content) and are used once.
+function pendingFits(key, im) { const p = S.pending && S.pending[key]; return !!p && p.name === im.name && p.w === im.w && p.h === im.h && (!p.sig || !im.sig || p.sig === im.sig); }
+// A short fingerprint of a picture file's bytes (its data URL after the type): two places' downloads can share a file name and size.
+function urlSig(u) { let h = 2166136261; const s = u.indexOf(',') + 1, n = u.length - s, step = Math.max(1, Math.floor(n / 1048576)); for (let i = s; i < u.length; i += step) h = Math.imul(h ^ u.charCodeAt(i), 16777619); return (h >>> 0).toString(36) + n.toString(36); }
 function settlePending() { const p = S.pending; if (p && (!p.B || p.done.B) && (!p.A || p.done.A)) S.pending = null; }
 // The saved placement (and, for the before picture, its pins) goes to the picture now in place `key`, and so does its
 // Taken on date when the picture has none.
@@ -1165,12 +1175,18 @@ function setPicture(key, pic) {
   const old = S[key]; if (old && old.mat) { try { old.mat.delete(); } catch (e) { /* already freed */ } }
   const w = pic.img.naturalWidth, h = pic.img.naturalHeight;
   // The frame is the grid the marks' pixels belong to: one per village (every date and layer), or your own before picture.
-  const frame = pic.frame || `own:${pic.name}:${w}x${h}`, frameTitle = pic.frameTitle || `your picture ${pic.name}`;
-  S[key] = { name: pic.name, url: pic.url, img: pic.img, w, h, imageData: imageDataOf(pic.img), mat: null, date: pic.date || '', packKey: pic.packKey || '', frame, frameTitle, ownGeo: pic.geo || null };
+  // Your own picture is known by its file name, size and content (sig), so marks never move onto another picture of that name.
+  const sig = pic.frame ? '' : pic.sig || urlSig(pic.url), bare = `own:${pic.name}:${w}x${h}`;
+  const frame = pic.frame || `${bare}:${sig}`, frameTitle = pic.frameTitle || `your picture ${pic.name}`;
+  S[key] = { name: pic.name, url: pic.url, img: pic.img, w, h, imageData: imageDataOf(pic.img), mat: null, date: pic.date || '', packKey: pic.packKey || '', frame, frameTitle, ownGeo: pic.geo || null, sig };
+  if (key === 'B' && sig) for (const sh of S.shapes) if (sh.home === bare) sh.home = frame;   // marks saved before pictures were known by content
   S.geo[key] = pic.geo || null; dropCredit();
-  const p = S.pending;
+  const p = S.pending, awaited = !!(p && p[key] && !S[key].packKey && !p.done[key] && pendingFits(key, S[key]));
+  // A pinned pair joins a spot of the before picture to one of the after picture: a new picture in either place ends the
+  // pairs, unless it is the picture opened saved work waits for, whose pairs they are.
+  if (!awaited) { S.cps = { b: [], a: [] }; updateCpInfo(); }
   if (p && p[key] && !S[key].packKey) {
-    if (!p.done[key] && pendingFits(key, S[key])) takePending(key);
+    if (awaited) takePending(key);
     else { p[key] = null; p.M = null; p.done[key] = false; p.geo[key] = null; }   // another picture took this place: the saved placement and line-up were for other pictures
   }
   // The search box belongs to the pictures it was drawn on: a new picture of your own or another village clears it.
@@ -1233,18 +1249,26 @@ function setAlignment(M, info) {
   if (S.source === 'own' && !hasGeo()) $('stepGeo').open = true;
   updateAlignInfo(); updateGeoState(); applyMode(); render();
 }
+// The part of the before picture the lined-up after picture covers (0 when they share no ground). Under a tenth the two
+// probably do not show the same place (a world file of another place, a slip), or share only a sliver of ground.
+function sharedPart() { const b = S.warped && S.warped.bbox; return b && S.B ? b.w * b.h / (S.B.w * S.B.h) : 0; }
+function pctText(f) { return f < 0.01 ? 'less than 1 %' : `${Math.floor(f * 100)} %`; }
 function updateAlignInfo() {
   const el = $('alignInfo');
   if (!S.M) { el.textContent = S.B && S.A ? 'Not lined up yet.' : 'Load both pictures first.'; return; }
   const i = S.alignInfo || {}, d = C.decompose(S.M);
   let html = '';
-  if (i.score !== undefined && i.score !== null && isFinite(i.score)) {
+  const hand = i.stage === 'pinned pairs';   // pinned by hand: the agreement cannot tell a line-up a few tens of pixels off; Improve refines it
+  if (i.score !== undefined && i.score !== null && isFinite(i.score) && !(hand && i.score >= 0.2)) {
     const conf = i.score >= 0.2 ? 'good' : (i.score >= 0.12 ? 'uncertain' : 'poor');
     html += `<b style="color:${conf === 'good' ? 'var(--ok-ink)' : conf === 'uncertain' ? 'var(--warn-ink)' : 'var(--danger)'}">Line-up ${conf}</b>, agreement ${fmt(i.score, 3)}`;
-    if (i.inliers !== undefined) html += `, ${i.inliers} matching points`;
-    if (conf !== 'good') html += '. Check it with the Checkerboard view; if roads break across the squares, pin pairs by hand.';
-  } else html += `<b>Lined up</b> (${esc(i.stage || 'done')})`;
+    if (i.inliers !== undefined) html += hand ? `, ${i.inliers} pinned pairs` : `, ${i.inliers} matching points`;
+    if (conf !== 'good') html += hand ? '. Check it with the Checkerboard view.' : '. Check it with the Checkerboard view; if roads break across the squares, pin pairs by hand.';
+  } else html += `<b>Lined up</b> (${esc(i.stage || 'done')})` + (hand ? (Number.isFinite(i.score) ? `, agreement ${fmt(i.score, 3)}.` : '.') : '');
+  if (hand) html += (i.rms >= 3 ? ` The pairs sit about ${fmt(i.rms, 0)} px from where this line-up puts them: check them.` : '') + ' Press Improve to refine it from the pictures.';
   html += `<br>scale ${fmt(d.scaleX, 3)}, turned ${fmt(d.angleDeg, 1)} degrees`;
+  if (S.warped && !S.warped.bbox) html += '<br><b style="color:var(--danger)">The two pictures share no ground.</b>';
+  else if (S.warped && sharedPart() < 0.1) html += `<br><b style="color:var(--danger)">The two pictures share only ${pctText(sharedPart())} of the before picture.</b>`;
   el.innerHTML = html;
 }
 function matOf(k) { const im = S[k]; if (!im.mat) im.mat = cv.matFromImageData(im.imageData); return im.mat; }
@@ -1256,7 +1280,7 @@ function warpedMats() {
 }
 /* "Taken on" from a file name. A screenshot's name carries the day it was taken, not the day the picture shows, and so does a
    name whose date is the file's own last-modified day: neither is used, and Taken on stays empty for the person to type. */
-const SHOT_NAME = /^\s*(screenshot|screen shot|capture|snip)/i;
+const SHOT_NAME = /screen[ _-]?shot|img-\d{8}-wa|photo_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}|^\s*(capture|snip)|\d{4}-\d{2}-\d{2}(?: [^\d\s]+)* \d{1,2}(?:[._]?\d{2}[._]?\d{2}|-\d{2}-\d{2})(?!\d)/i;   // "Screenshot", WhatsApp's and Telegram's names anywhere (a copy or a rename keeps them: "Copy of Screenshot ..."); also a date then a time of day, as screenshots and chat apps name files in every language
 function localDay(t) { const d = new Date(t); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
 function guessDate(file) {
   const name = (file && file.name) || '';
@@ -1270,7 +1294,7 @@ async function pictureFromKmz(file, key) {
   const kmlName = zip.names.find(n => /(^|\/)doc\.kml$/i.test(n)) || zip.names.find(n => /\.kml$/i.test(n));
   if (!kmlName) throw new Error('This KMZ holds no KML file.');
   const ovs = G.kmlOverlays(await zip.text(kmlName));
-  const clean = h => String(h || '').replace(/^\.\//, '');
+  const clean = h => { const s = String(h || '').replace(/^\.\//, ''); if (zip.names.includes(s)) return s; try { const d = decodeURIComponent(s); return zip.names.includes(d) ? d : s; } catch (e) { return s; } };   // an href is a URL: %20 is a space
   const found = ovs.filter(o => o.href && zip.names.includes(clean(o.href)));
   if (!found.length) throw new Error('This KMZ holds no picture placed on the map (no ground overlay).');
   // A KMZ with several pictures (Change Marker saves before.jpg and after.jpg): the After box takes the after or latest one,
@@ -1287,24 +1311,45 @@ async function pictureFromKmz(file, key) {
   const url = await readAsDataURL(new Blob([bytes], { type })); const im = await loadImg(url);
   return { name: `${file.name}: ${ov.name || clean(ov.href)}`, url, img: im, geo: G.geoFromOverlay(ov, im.naturalWidth, im.naturalHeight), date: cleanDate(ov.when) || guessDate(file), several: found.length };
 }
+// What to say about a world file that gives no placement, or that is probably in other units than the ones this tool reads.
+function worldFileNote(wld, geo, w, h) {
+  if (!geo) return ` ${wld.name} could not be read as a world file (six numbers, one to a line, with points for decimals), so the picture is not on the map yet.`;
+  if (geo.crs !== 'EPSG:3857' || Math.abs(geo.A[0][2]) >= 1e6) return '';
+  const c = G.pxToLL(geo, [w / 2, h / 2]);
+  return ` Its world file puts its middle at ${fmt(c[1], 5)}, ${fmt(c[0], 5)}: if that is not your place, the file is in other units (UTM metres?), which this tool does not read. Pin places instead (step 3).`;
+}
+// A world file or KML given after its picture puts the picture already in the box on the map, as typed corners do.
+async function placeByFile(key, wld, kml) {
+  const im = S[key], f = wld || kml;
+  let geo = null, note = '';
+  if (wld) { geo = G.worldFile(await wld.text(), im.w, im.h); note = worldFileNote(wld, geo, im.w, im.h); }
+  else { const ovs = G.kmlOverlays(await kml.text()); if (ovs[0]) geo = G.geoFromOverlay(ovs[0], im.w, im.h); }
+  if (!geo) return setStatus(note ? note.trim() : `${f.name} holds no placement this tool can read, so ${im.name} is not on the map yet.`, 'err');
+  S.geo[key] = geo; im.ownGeo = geo; if (key === 'B') S.geoPins = [];
+  if (key === 'B' || (S.M && !S.geo.B)) forgetHomeLL();   // the marks drawn on these pictures take the position it gives
+  $('name' + key).textContent = `${im.name}, ${im.w} by ${im.h} px, placed on the map`;
+  finishGeo(); setStatus(`${key === 'B' ? 'Before' : 'After'} picture put on the map by ${f.name}.` + note, note ? 'err' : 'ok');
+}
 async function loadPictureFiles(files, key) {
   const list = Array.from(files || []); if (!list.length) return;
   try {
     const kmz = list.find(f => /\.kmz$/i.test(f.name));
-    const img = list.find(f => /^image\/(png|jpeg|webp|gif|bmp)$/i.test(f.type) || /\.(png|jpe?g|webp|gif|bmp)$/i.test(f.name));
-    const wld = list.find(f => /\.(pgw|pngw|jgw|jpgw|jpegw|wld|gfw|bpw)$/i.test(f.name));
-    const kml = list.find(f => /\.kml$/i.test(f.name));
+    const isPic = f => /^image\/(png|jpeg|webp|gif|bmp)$/i.test(f.type) || /\.(png|jpe?g|webp|gif|bmp)$/i.test(f.name), img = list.find(isPic);
+    // A world file or KML goes with the picture of its own name; one given alone goes with the one picture given.
+    const stem = f => f.name.replace(/\.[^.]*$/, '').toLowerCase(), mate = re => { const all = list.filter(f => re.test(f.name)); return (img && all.find(f => stem(f) === stem(img))) || (all.length === 1 && list.filter(isPic).length <= 1 ? all[0] : null); };
+    const wld = mate(/\.(pgw|pngw|jgw|jpgw|jpegw|wld|gfw|bpw)$/i), kml = mate(/\.kml$/i);
     if (!kmz && !img) {
       if (list.some(f => /\.tiff?$/i.test(f.name))) throw new Error('Browsers cannot show TIFF files. Download the picture as PNG or JPG, or as KMZ.');
-      throw new Error('Choose a picture (PNG or JPG), or a KMZ that holds one.');
+      if ((wld || kml) && S[key] && !S[key].packKey) return await placeByFile(key, wld, kml);   // the world file or KML of the picture already in this box
+      throw new Error('Choose a picture (PNG or JPG), or a KMZ that holds one. A world file or KML goes with its picture: drop them together.');
     }
     setStatus('Opening the picture...');
-    let pic;
+    let pic, unread = '';
     if (kmz && !img) pic = await pictureFromKmz(kmz, key);
     else {
       const url = await readAsDataURL(img), im = await loadImg(url);
       let geo = null;
-      if (wld) geo = G.worldFile(await wld.text(), im.naturalWidth, im.naturalHeight);
+      if (wld) { geo = G.worldFile(await wld.text(), im.naturalWidth, im.naturalHeight); unread = worldFileNote(wld, geo, im.naturalWidth, im.naturalHeight); }
       else if (kml) { const ovs = G.kmlOverlays(await kml.text()); if (ovs[0]) geo = G.geoFromOverlay(ovs[0], im.naturalWidth, im.naturalHeight); }
       pic = { name: img.name, url, img: im, geo, date: guessDate(img) };
     }
@@ -1312,22 +1357,32 @@ async function loadPictureFiles(files, key) {
     const other = key === 'B' ? 'A' : 'B';
     if (S[other] && S[other].packKey) { clearPicture(other); }
     if (S.B && S.B.packKey) S.marks = null;
+    const again = S[key] && !S[key].packKey && S[key].url === pic.url ? S[key].date : '';   // the same file dropped again keeps its Taken on
     if (key === 'B') { S.geoPins = []; }
+    const was = { frame: frameId(), url: S[key] ? S[key].url : null }, found = S[key] ? S.shapes.filter(s => isDraft(s) && s.home === was.frame).length : 0;   // drafts found with the picture this one replaces
     setPicture(key, pic);
-    const field = $('date' + key); S[key].date = pic.date || S[key].date || ''; field.value = S[key].date;   // a date saved with the work stays, unless the file name gives one
+    const stale = !found ? 0 : key === 'A' ? (was.url !== pic.url ? found : 0) : (frameId() !== was.frame ? found : 0);
+    const field = $('date' + key); S[key].date = pic.date || S[key].date || again || ''; field.value = S[key].date;   // a date saved with the work stays, unless the file name gives one
     field.classList.toggle('need', !S[key].date);
     $('name' + key).textContent = `${pic.name}, ${S[key].w} by ${S[key].h} px${S.geo[key] ? ', placed on the map' : ''}`;
     $('drop' + key).classList.add('loaded');
     if (key === 'B') fitView('B'); fitView('A');
     refreshAlignment(); updateGeoState(); renderGeoPinList();
     let msg;
-    if (S.B && S.A) msg = aligned() ? 'Both pictures are in and lined up. Compare them, then mark what changed.' : 'Both pictures are in. Next: line them up (step 2).';
+    const part = aligned() ? sharedPart() : 1, sliver = part > 0 && part < 0.1;
+    if (S.B && S.A) msg = aligned() ? (sliver ? `Both pictures are in and lined up, but they share only ${pctText(part)} of the before picture: check that both show the same place, and their world files.` : S.warped.bbox ? 'Both pictures are in and lined up. Compare them, then mark what changed.' : 'Both pictures are in, but their places on the map share no ground: check that both show the same place, and their world files.') : 'Both pictures are in. Next: line them up (step 2).';
     else msg = `${key === 'B' ? 'Before' : 'After'} picture loaded. Now the ${key === 'B' ? 'after' : 'before'} picture.`;
+    if (S.B && S.A && !S.B.packKey && !S.A.packKey && S.B.url === S.A.url) msg += ' The before and after pictures are the same file, so they cannot show a change: drop the picture of the other date.';
     if (pic.several > 1) msg = `Took "${pic.name.split(': ').slice(1).join(': ')}" from the KMZ. ` + msg;
+    const unused = list.filter(f => f !== (img || kmz) && f !== (img ? wld || kml : null));
+    if (unused.length) msg += ` Not used: ${unused.map(f => f.name).join(', ')}. Give each box one picture, with its own world file.`;
     const undated = ['B', 'A'].filter(k => S[k] && !S[k].date).map(k => k === 'B' ? 'before' : 'after');
     if (undated.length) msg += ` Type under Taken on the date ${undated.length === 2 ? 'each picture' : `the ${undated[0]} picture`} shows.`;
+    const flip = S.B && S.A && !S.B.packKey && !S.A.packKey && S.B.date && S.A.date && S.B.date > S.A.date;
+    if (flip) msg += ' The before picture is dated after the after picture: check the two dates, or put each picture in the other box.';
+    if (stale) msg += key === 'A' ? ` The ${stale} draft(s) found with the previous after picture are still listed: press Find changes again, or Delete all drafts.` : ` The ${stale} draft(s) found with the previous before picture are still listed: Delete all drafts, then press Find changes again.`;
     const away = S.B ? elsewhereText() : ''; if (away) msg += ' ' + away;   // with no before picture every mark would read as drawn on other pictures
-    setStatus(msg, S.B && S.A ? 'ok' : '');
+    setStatus(msg + unread, unread || flip || sliver || (aligned() && !S.warped.bbox) ? 'err' : S.B && S.A ? 'ok' : '');
     if (S.B && S.A && !aligned()) $('stepAlign').open = true;
   } catch (e) { console.error(e); setStatus(e.message || String(e), 'err'); }
 }
@@ -1337,8 +1392,9 @@ function clearPicture(k) {
 }
 for (const k of ['B', 'A']) {
   const drop = $('drop' + k), file = $('file' + k);
+  $('body' + k).addEventListener('click', () => { if (!S[k]) file.click(); });   // a click or tap on an empty picture opens the file chooser: a phone cannot drop a file
   drop.addEventListener('click', () => file.click());
-  drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); file.click(); } });
+  drop.addEventListener('keydown', e => { if (e.key === 'Enter' || (e.key === ' ' && !S.over)) { e.preventDefault(); file.click(); } });   // Space with the pointer on a picture pans
   file.addEventListener('change', () => { loadPictureFiles(file.files, k); file.value = ''; });
   for (const el of [drop, $('body' + k)]) {
     el.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
@@ -1347,7 +1403,8 @@ for (const k of ['B', 'A']) {
   }
   $('date' + k).addEventListener('change', () => {
     const field = $('date' + k), v = cleanDate(field.value);
-    if (field.value && !v) { field.classList.add('need'); setStatus('Write the date as YYYY-MM-DD, for example 2026-10-23.', 'err'); return; }
+    if (field.value && !v) { field.classList.add('need'); setStatus('Write a day that exists, as YYYY-MM-DD, for example 2026-10-23.', 'err'); return; }
+    if (v && v > localDay(Date.now())) { field.classList.add('need'); setStatus(`${v} is after today: write the date the picture shows.`, 'err'); return; }
     field.classList.toggle('need', !v);
     if (!S[k] || S[k].date === v) return;
     if (S[k].packKey) return setStatus('Taken on is for your own pictures. The village pictures on screen keep their own dates: drop your picture first, then type its date.');
@@ -1358,7 +1415,8 @@ for (const k of ['B', 'A']) {
     S[k].date = v;
     for (const sh of hit) { sh.seen = (sh.seen || ['', '']).slice(); sh.seen[i] = v; }
     changed();
-    setStatus(`${k === 'B' ? 'Before' : 'After'} picture taken on ${v || 'an unknown date'}.` + (hit.length ? ` ${hit.length} mark(s) on these pictures carried ${old || 'no date'} there and now carry ${v || 'no date'}.` : ''), 'ok');
+    const flip = S.B && S.A && S.B.date && S.A.date && S.B.date > S.A.date ? ' The before picture is now dated after the after picture: check the two dates.' : '';
+    setStatus(`${k === 'B' ? 'Before' : 'After'} picture taken on ${v || 'an unknown date'}.` + (hit.length ? ` ${hit.length} mark(s) on these pictures carried ${old || 'no date'} there and now carry ${v || 'no date'}.` : '') + flip, flip ? 'err' : 'ok');
   });
 }
 $('ownLayer').addEventListener('change', () => { updateFindUI(); render(); });
@@ -1391,7 +1449,7 @@ function loadPackScript(key) {
   });
 }
 function initPackUI() {
-  if (!CAT || !CAT.villages || !CAT.villages.length) { $('packBox').hidden = true; $('packMissing').hidden = false; $('srcPack').disabled = true; setSource('own'); return; }
+  if (!CAT || !CAT.villages || !CAT.villages.length) { $('packBox').hidden = true; $('packMissing').hidden = false; document.body.classList.add('nopack'); $('srcPack').disabled = true; setSource('own'); return; }
   $('packVillage').innerHTML = '<option value="">Pick a village</option>' + CAT.villages.map(v => `<option value="${esc(v.key)}">${esc(v.title)}${v.title_ar ? '  ' + esc(v.title_ar) : ''}</option>`).join('');
   $('packLayer').innerHTML = Object.entries(LAYERS).map(([k, l]) => `<option value="${k}">${esc(l.label)}</option>`).join('');
   $('layerHint').textContent = LAYERS[S.packLayer].hint;
@@ -1487,29 +1545,37 @@ $('btnResetAlign').addEventListener('click', () => {
   if (placedThroughA) forgetHomeLL();   // the before picture was on the map only through the line-up
   updateAlignInfo(); updateGeoState(); applyMode(); render(); setStatus('Line-up reset.');
 });
-function updateCpInfo() { const n = Math.min(S.cps.b.length, S.cps.a.length); $('cpInfo').textContent = `${n} pair${n === 1 ? '' : 's'}` + (S.cps.b.length !== S.cps.a.length ? ', one waiting for its partner' : ''); }
+function updateCpInfo() { const nb = S.cps.b.length, na = S.cps.a.length, n = Math.min(nb, na), w = Math.abs(nb - na); $('cpInfo').textContent = `${n} pair${n === 1 ? '' : 's'}` + (w ? `, ${w === 1 ? 'one pin' : w + ' pins'} on ${nb > na ? 'BEFORE' : 'AFTER'} waiting for ${w === 1 ? 'its partner' : 'their partners'}` : ''); }
+// While pinning, Backspace (and Ctrl+Z, for the pins pinned since the last change to a mark) takes back the pin waiting for
+// its partner, else the last pair.
+function takeBackPin() { S.lastPinAt = null; const nb = S.cps.b.length, na = S.cps.a.length; if (nb >= na) S.cps.b.pop(); if (na >= nb) S.cps.a.pop(); S.pinsLast = Math.max(0, (S.pinsLast || 0) - (nb === na ? 2 : 1)); updateCpInfo(); render(); setStatus(nb === na ? 'Took back the last pair.' : 'Took back the pin waiting for its partner.'); }
 $('btnCP').addEventListener('click', () => setTool(S.tool === 'cp' ? 'select' : 'cp'));
-$('btnCPClear').addEventListener('click', () => { S.cps = { b: [], a: [] }; updateCpInfo(); render(); });
+$('btnCPClear').addEventListener('click', () => { S.cps = { b: [], a: [] }; S.lastPinAt = null; updateCpInfo(); render(); });
 $('btnCPApply').addEventListener('click', () => {
   if (!S.B || !S.A) return; const n = Math.min(S.cps.b.length, S.cps.a.length);
   const pairs = []; for (let i = 0; i < n; i++) pairs.push({ p: S.cps.b[i], q: S.cps.a[i] });
-  const wantAffine = $('model').value === 'affine' && n >= 3;
+  // Pairs almost on one line pin the pictures along that line only: a stretch away from it would be guesswork, so they
+  // give scale, turn and shift, and the status asks for a pair away from the line.
+  const affine = $('model').value === 'affine' && n >= 3, thin = affine && inLine(pairs, 0.3), wantAffine = affine && !thin;   // pinned pairs slip more than typed pins: a flat triangle is a line
   const M = wantAffine ? C.fitAffine(pairs) : (n >= 2 ? C.fitSimilarity(pairs) : null);
-  if (!M) return setStatus('Pin at least 2 pairs (3 or more is better).', 'err');
+  if (!M) return setStatus(n >= 2 ? 'These pairs give no line-up: their spots on BEFORE are all the same spot. Take back the wrong pin (Backspace while pinning), or Clear, and pin them again far apart.' : 'Pin at least 2 pairs (3 or more is better).', 'err');
   let rms = 0; for (const { p, q } of pairs) { const t = C.apply(M, p[0], p[1]); rms += (t[0] - q[0]) ** 2 + (t[1] - q[1]) ** 2; } rms = Math.sqrt(rms / n);
   setAlignment(M, { stage: 'pinned pairs', inliers: n, rms });
-  setStatus(`Applied ${n} pinned pairs. Press Improve to refine it from the pictures.`, 'ok');
-  setTool('select');
+  setTool('select');   // first: the tool's hint would replace the status below
+  setStatus(thin ? `These ${n} pairs lie almost on one line, so they line the pictures up along it only. Add a pair well away from that line, then Apply again.` : `Applied ${n} pinned pairs. Press Improve to refine it from the pictures.`, thin ? 'err' : 'ok');
 });
 
 /* ---------- put on the map ---------- */
 function updateGeoState() {
   const el = $('geoState');
-  if (!S.B) { el.innerHTML = 'Load a picture first.'; }
+  if (!S.B) { el.innerHTML = S.A ? 'Load the before picture too: pins and marks go on it.' : 'Load a picture first.'; }
   else if (villageMode() && S.B.packKey && S.geo.B && S.geo.B.source === 'village pictures') el.innerHTML = '<div class="okbox">On the map: our village pictures carry their position. Measures are in hectares and metres, and exports give real coordinates.</div>';
   else if (S.geo.B) {
     const g = S.geo.B, bad = g.thin || (g.err_m !== undefined && g.err_m > PIN_WARN_M) || g.worst_m > PIN_WARN_M;
-    el.innerHTML = `<div class="${bad ? 'note' : 'okbox'}">On the map (${esc(g.source)}${g.err_m !== undefined && !g.thin ? `, error about ${num(g.err_m, 0)} m` : ''})${g.thin ? ': the pins lie almost on one line, add one away from it before you export' : bad ? ': the pins disagree, check them before you export' : ''}.</div>`;
+    // Where a world file, KML or typed corners put the picture, so that a file read in the wrong units shows
+    const c = g.source === 'pinned places' ? null : G.pxToLL(g, [S.B.w / 2, S.B.h / 2]), q = c && isFinite(c[0]) && isFinite(c[1]) ? `${fmt(c[1], 5)},${fmt(c[0], 5)}` : '';
+    const at = q ? ` Its middle is at ${q.replace(',', ', ')} (<a href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener">Google Maps</a>): check that it is your place.` : '';
+    el.innerHTML = `<div class="${bad ? 'note' : 'okbox'}">On the map (${esc(g.source)}${g.err_m !== undefined && !g.thin ? `, error about ${num(g.err_m, 0)} m` : ''})${g.thin ? ': the pins lie almost on one line, add one away from it before you export' : bad ? ': the pins disagree, check them before you export' : ''}.${at}</div>`;
   }
   else if (S.geo.A && S.M) el.innerHTML = '<div class="okbox">On the map through the after picture.</div>';
   else el.innerHTML = '<div class="note">Not on the map yet. GeoJSON, KML, KMZ and Copy for the sheet need it; PNG pictures and saving your work do not.</div>';
@@ -1519,7 +1585,7 @@ function updateGeoState() {
 function geoReady() { ensureSync(); return hasGeo() || S.shapes.some(s => s.ll); }
 function updateExportButtons() {
   const ready = geoReady();
-  for (const id of ['btnGeojson', 'btnKml', 'btnKmz']) { $(id).disabled = !ready; $(id).title = ready ? '' : 'Put the pictures on the map first (step 3).'; }
+  for (const id of ['btnGeojson', 'btnKml', 'btnKmz']) { const b = $(id); if (b.dataset.tip === undefined) b.dataset.tip = b.title; b.disabled = !ready; b.title = ready ? b.dataset.tip : 'Put the pictures on the map first (step 3).'; }
   const t = ready ? (hasGeo() ? '' : 'These pictures are not on the map: the exports hold the marks that have a map position, without the pictures.') : 'GeoJSON, KML and KMZ need the pictures on the map (step 3).';
   if ($('exportHint').textContent !== t) $('exportHint').textContent = t;
   const roi = !!S.roi; if ($('roiNote').hidden === roi) $('roiNote').hidden = !roi;
@@ -1579,11 +1645,11 @@ function fitDeg(list) {
 }
 // Pins almost on one line: none is further from the line through the two furthest apart than 15 % of their distance. They
 // pin the picture along that line only, so they cannot check it away from it (a map drawn in degrees is stretched there).
-function inLine(list) {
+function inLine(list, tol = 0.15) {
   if (list.length < 3) return false;
   let a = null, b = null, L = 0;
   for (const g of list) for (const h of list) { const d = Math.hypot(h.p[0] - g.p[0], h.p[1] - g.p[1]); if (d > L) { L = d; a = g.p; b = h.p; } }
-  return !L || list.every(g => Math.abs((b[0] - a[0]) * (g.p[1] - a[1]) - (b[1] - a[1]) * (g.p[0] - a[0])) < 0.15 * L * L);
+  return !L || list.every(g => Math.abs((b[0] - a[0]) * (g.p[1] - a[1]) - (b[1] - a[1]) * (g.p[0] - a[0])) < tol * L * L);
 }
 function fitGeoFromPins() {
   const ok = S.geoPins.filter(g => g.ll);
@@ -1658,11 +1724,21 @@ function fitGeoFromPins() {
 function finishGeo() { if (S.B && S.A && !S.M) { const M = alignFromGeo(); if (M) { setAlignment(M, { stage: 'from the map placement' }); } } updateGeoState(); renderGeoPinList(); changed(); }
 $('btnGeoPin').addEventListener('click', () => setTool(S.tool === 'geopin' ? 'select' : 'geopin'));
 $('btnGeoClear').addEventListener('click', () => { S.geoPins = []; fitGeoFromPins(); });
+let cornersAsTyped = '';   // the corners last swapped, as typed: typed again, they are taken as they are
 $('btnCorners').addEventListener('click', () => {
   if (!S.B) return setStatus('Load the before picture first.', 'err');
-  const v = ['cW', 'cS', 'cE', 'cN'].map(id => parseFloat(String($(id).value).replace(',', '.')));
-  if (v.some(x => !isFinite(x)) || v[0] >= v[2] || v[1] >= v[3]) return setStatus('Write the four corners in decimal degrees: west smaller than east, south smaller than north.', 'err');
-  S.geo.B = G.fromBounds(S.B.w, S.B.h, v, 'EPSG:3857', 'typed corners'); S.geoPins = []; forgetHomeLL(); finishGeo(); setStatus('On the map from the typed corners.', 'ok');
+  let v = ['cW', 'cS', 'cE', 'cN'].map(id => parseFloat(String($(id).value).replace(',', '.'))), swapped = false;
+  // Corners fit the picture when the box they make has its shape, on a web map or on a map drawn in degrees: a digit lost
+  // or a number typed in the wrong box makes another shape.
+  const fits = c => { const r = S.B.w / S.B.h, dx = c[2] - c[0], dy = c[3] - c[1]; return dy > 0 && [dx * Math.cos((c[1] + c[3]) / 360 * Math.PI) / dy / r, dx / dy / r].some(x => x > 0.67 && x < 1.5); };
+  // Latitude and longitude in each other's boxes, read as the pins read South Lebanon's numbers (latitude 32.9 to 34.8, longitude 34.8 to 36.7);
+  // not where the numbers as typed fit the picture and the swapped ones do not (a place like Cyprus), and not twice for the same numbers.
+  const typed = v.join(' '), flip = [Math.min(v[1], v[3]), Math.min(v[0], v[2]), Math.max(v[1], v[3]), Math.max(v[0], v[2])];
+  if ([v[0], v[2]].every(x => x > 32.9 && x < 34.8) && [v[1], v[3]].every(x => x > 34.8 && x < 36.7) && typed !== cornersAsTyped && !(fits(v) && !fits(flip))) { v = flip; swapped = true; }
+  if (v.some(x => !isFinite(x)) || v[0] >= v[2] || v[1] >= v[3] || v[0] < -180 || v[2] > 180 || v[1] < -85 || v[3] > 85) return setStatus('Write the four corners in decimal degrees: north and south between -85 and 85, west and east between -180 and 180, west smaller than east, south smaller than north.', 'err');
+  if (!fits(v)) return setStatus('These corners do not have the shape of the picture: one of the numbers is probably mistyped. Check each one.', 'err');
+  if (swapped) { cornersAsTyped = typed; ['cW', 'cS', 'cE', 'cN'].forEach((id, i) => { $(id).value = v[i]; }); }
+  S.geo.B = G.fromBounds(S.B.w, S.B.h, v, 'EPSG:3857', 'typed corners'); S.geoPins = []; forgetHomeLL(); finishGeo(); setStatus((swapped ? 'Those corners looked like latitude and longitude in each other\'s boxes, so they were swapped. If they were right as you typed them, type them again and press Apply the corners again. ' : '') + 'On the map from the typed corners.', 'ok');
 });
 
 /* ---------- compare views ---------- */
@@ -1843,7 +1919,7 @@ function panelLabels() {
   else if (mode === 'checker') { tag.textContent = 'CHECK'; $('labA').textContent = 'squares of each picture: roads and edges must run straight across'; }
   else { tag.textContent = 'AFTER'; $('labA').textContent = aText + (mode === 'native' && S.A ? (S.M ? ', as taken' : ', not lined up yet') : (S.A ? ', ' + lay : '')); }
   $('emptyB').hidden = !!S.B; $('emptyA').hidden = !!S.A;
-  if (!S.B && !S.A) { $('emptyB').textContent = CAT ? 'Pick a village under Pictures (step 1), or drop your own before picture here.' : 'Drop your before picture here.'; $('emptyA').textContent = 'Drop your after picture here.'; }
+  if (!S.B && !S.A) { $('emptyB').textContent = CAT ? 'Pick a village under Pictures (step 1), or click or drop your own before picture here.' : 'Click or drop your before picture here.'; $('emptyA').textContent = 'Click or drop your after picture here.'; }
 }
 function render() {
   ensureSync();
@@ -1854,7 +1930,7 @@ function render() {
   renderDraft(); panelLabels(); renderKindChips(); renderClasses(); renderSelection(); renderMarkList(); updateExportButtons();
   updateUndoButtons(); $('btnDelete').disabled = S.sel == null;
 }
-function updateUndoButtons() { $('btnUndo').disabled = !S.undo.length; $('btnRedo').disabled = !S.redo.length; }
+function updateUndoButtons() { $('btnUndo').disabled = !S.undo.length && !draft.length; $('btnRedo').disabled = !S.redo.length; }
 window.addEventListener('resize', () => render());
 $('showHeat').addEventListener('change', render); $('heatOpacity').addEventListener('input', render);
 $('showMarks').addEventListener('change', () => { S.showMarks = $('showMarks').checked; render(); });
@@ -1866,7 +1942,7 @@ const TOOL_HINT = {
   select: 'Click a mark to select it, drag it or its corners to change it. Drag the picture to move the view.',
   pan: 'Drag to move the view; the wheel zooms.', polygon: 'Click the corners of the area. Double-click or Enter to finish, Esc to cancel.',
   freehand: 'Hold the button down and draw round the area.', rect: 'Drag a box.', line: 'Click along the road or track. Double-click or Enter to finish.',
-  marker: 'Click to place a point.', cp: 'Pin pairs: click a landmark on BEFORE, then the same spot on AFTER.',
+  marker: 'Click to place a point.', cp: 'Pin pairs: click a landmark on BEFORE, then the same spot on AFTER. Backspace or Ctrl+Z takes back the last pin.',
   geopin: 'Click a spot on the BEFORE picture that you can also find on Google Maps.', roi: 'Drag a box round the part to search.' };
 function setTool(t) {
   S.tool = t; draft = [];
@@ -1890,11 +1966,19 @@ function restoreSnap(js) {
   if (!S.classes.find(c => c.id === S.cls)) S.cls = (S.classes.find(c => !isAuto(c.id)) || S.classes[0]).id;
   bump();
 }
-function pushUndo() { S.undo.push(snapshot()); if (S.undo.length > 80) S.undo.shift(); S.redo = []; }
+function pushUndo() { S.undo.push(snapshot()); if (S.undo.length > 80) S.undo.shift(); S.redo = []; S.pinsLast = 0; }
 // After Undo or Redo the status says so, unless it is a kind change's sheet instruction that still holds for its mark.
 function undoneStatus(word) { const k = kindNote; if (k && S.shapes.some(s => s.uid === k.uid && s.label === k.label && s.cls === k.cls)) return; setStatus(word, 'ok'); }
-function undo() { if (!S.undo.length) return; S.redo.push(snapshot()); restoreSnap(S.undo.pop()); if (!S.shapes.find(s => s.id === S.sel)) S.sel = null; noteArmed = true; changed(); undoneStatus('Undone.'); }
-function redo() { if (!S.redo.length) return; S.undo.push(snapshot()); restoreSnap(S.redo.pop()); if (!S.shapes.find(s => s.id === S.sel)) S.sel = null; noteArmed = true; changed(); undoneStatus('Redone.'); }
+// Esc, or Undo while the button is still held, ends what is being drawn or dragged: a move or a reshape puts the mark back
+// as it was when the drag began (the undo step the drag pushed). A pan goes on. Says what was cancelled, or '' for nothing.
+function cancelDrag() {
+  const d = drag; if (!d || d.kind === 'pan' || d.kind === 'swipe') return '';
+  drag = null; renderDraft();
+  if (d.kind === 'move' || d.kind === 'vertex') { if (d.pushed) { restoreSnap(S.undo.pop()); changed(); } return 'Move cancelled.'; }
+  return 'Drawing cancelled.';
+}
+function undo() { const c = cancelDrag(); if (c) { setStatus(c); return; } if (draft.length) { draft.pop(); renderDraft(); setStatus('Last corner taken back.'); return; } if (!S.undo.length) return; S.redo.push(snapshot()); restoreSnap(S.undo.pop()); if (!S.shapes.find(s => s.id === S.sel)) S.sel = null; noteArmed = true; changed(); undoneStatus('Undone.'); }
+function redo() { if (drag && drag.kind !== 'pan' && drag.kind !== 'swipe') return; if (!S.redo.length) return; S.undo.push(snapshot()); restoreSnap(S.redo.pop()); if (!S.shapes.find(s => s.id === S.sel)) S.sel = null; noteArmed = true; changed(); undoneStatus('Redone.'); }
 function seenNow() { return [S.B ? S.B.date || '' : '', S.A ? S.A.date || '' : '']; }
 function addShape(sh) {
   pushUndo(); sh.id = S.nextId++; if (!sh.cls) sh.cls = S.cls; if (!sh.source) sh.source = 'manual'; sh.kept = sh.source !== 'auto';
@@ -1934,18 +2018,25 @@ function renderDraft() {
     }
     p.draft.innerHTML = html;
   }
+  updateUndoButtons();   // the Undo button takes back a corner while one is drawn
 }
 function rectOf(a, b) { return { x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]), w: Math.abs(b[0] - a[0]), h: Math.abs(b[1] - a[1]) }; }
 function needsFrame(k) { if (k === 'A' && frameA() === 'after' && !S.M) { setStatus('Line the pictures up first, or draw on the BEFORE picture.', 'err'); return false; } return true; }
 function onDown(e, k) {
   const svg = P[k].svg; if (!S[k]) return;
+  // A box of the selected mark still being typed in keeps what was typed for that mark: write it now, before this click
+  // can change the selection (the browser writes it only when the box loses the focus, after this handler).
+  const typing = document.activeElement; if (typing && ['selLabel', 'selSeen0', 'selSeen1'].includes(typing.id)) typing.blur();
   try { svg.setPointerCapture(e.pointerId); } catch (err) { /* not capturable */ }
   const p = ptIn(svg, e);
   if (k === 'A' && e.target.closest && e.target.closest('[data-swipe]')) { drag = { kind: 'swipe', k }; return; }
   if (e.button === 1 || S.tool === 'pan' || spaceDown) { drag = { kind: 'pan', k, sx: e.clientX, sy: e.clientY, v: Object.assign({}, viewOf(k)) }; return; }
   if (e.button !== 0) return;
   if (S.tool === 'cp') {
+    const now = performance.now(), last = S.lastPinAt, again = last && last.k === k && now - last.t < 600 && Math.hypot(e.clientX - last.x, e.clientY - last.y) < 3;
+    S.lastPinAt = { k, t: now, x: e.clientX, y: e.clientY }; if (again) return;   // a click repeated on the spot, as in a triple click, is the same pin
     if (k === 'A' && frameA() === 'before') { if (!S.M) return; S.cps.a.push(C.apply(S.M, p[0], p[1])); } else if (k === 'A') S.cps.a.push(p); else S.cps.b.push(p);
+    S.pinsLast = (S.pinsLast || 0) + 1;   // the pins since the last change to a mark: Ctrl+Z takes these back first
     updateCpInfo(); render(); return;
   }
   if (!needsFrame(k)) return;
@@ -1994,7 +2085,9 @@ function onMove(e, k) {
 }
 function onUp(e, k) {
   if (!drag || drag.k !== k) return; const d = drag; drag = null;
-  if (d.kind === 'free') { const eps = 2.5 / (pxPerUnit(P[k].svg) || 1); const pts = C.simplify(d.pts, Math.max(0.5, eps)); if (pts.length >= 3) addShape({ type: 'polygon', pts }); }
+  // The trace is simplified within 2.5 screen pixels (a hand's wobble is not kept as corners), and within 1/150 of its size
+  // for a small trace, whose round edges would otherwise be cut inside by a few hundredths of its area.
+  if (d.kind === 'free') { const b = shapeBBox({ pts: d.pts }), eps = Math.min(2.5 / (pxPerUnit(P[k].svg) || 1), Math.max(b.w, b.h) / 150); const pts = C.simplify(d.pts, Math.max(0.5, eps)); if (pts.length >= 3) addShape({ type: 'polygon', pts }); }
   else if (d.kind === 'rect') { const r = rectOf(d.start, d.cur); if (r.w > 2 && r.h > 2) addShape({ type: 'polygon', pts: [[r.x, r.y], [r.x + r.w, r.y], [r.x + r.w, r.y + r.h], [r.x, r.y + r.h]] }); }
   else if (d.kind === 'roi') { const r = rectOf(d.start, d.cur); S.roi = (r.w > 5 && r.h > 5) ? r : null; setTool('select'); setStatus(S.roi ? 'Find changes will search only inside this box.' : 'Box too small.'); }
   else if ((d.kind === 'move' || d.kind === 'vertex') && d.pushed) { const sh = S.shapes.find(s => s.id === d.id); if (sh && sh.pts) rehome(sh); changed(); }
@@ -2010,22 +2103,32 @@ for (const k of ['B', 'A']) {
   svg.addEventListener('pointerdown', e => onDown(e, k)); svg.addEventListener('pointermove', e => onMove(e, k)); svg.addEventListener('pointerup', e => onUp(e, k));
   svg.addEventListener('pointerleave', () => { S.over = null; if (!drag) { S.cursor = null; updateCoords(); renderDraft(); } });
   svg.addEventListener('pointerenter', () => { S.over = k; });
-  svg.addEventListener('dblclick', () => { if (S.tool === 'polygon' || S.tool === 'line') finishDraft(); });
+  svg.addEventListener('dblclick', () => {
+    if (S.tool === 'polygon' || S.tool === 'line') finishDraft();
+    else if (S.tool === 'cp') {   // a double click pins once: its second click put a second pin on the same spot
+      const L = k === 'A' ? S.cps.a : S.cps.b, n = L.length;
+      if (n >= 2 && Math.hypot(L[n - 1][0] - L[n - 2][0], L[n - 1][1] - L[n - 2][1]) < 3 / (pxPerUnit(svg) || 1)) { L.pop(); S.pinsLast = Math.max(0, (S.pinsLast || 0) - 1); updateCpInfo(); render(); }
+    }
+  });
   svg.addEventListener('wheel', e => onWheel(e, k), { passive: false }); svg.addEventListener('contextmenu', e => e.preventDefault());
 }
 document.addEventListener('keydown', e => {
-  const tag = e.target.tagName; if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+  const tag = e.target.tagName;
+  // With the pointer on a picture a drawing key is for the picture, even when a list (They show, a kind) kept the focus.
+  if (tag === 'SELECT' && S.over && !e.ctrlKey && !e.metaKey && !e.altKey && e.key.length === 1) { e.preventDefault(); e.target.blur(); }
+  else if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
   if ($('help').open || $('copyDlg').open) return;
   // Space pans only with the pointer on a picture, so it still presses a focused button anywhere else.
   if (e.key === ' ') { if (S.over) { spaceDown = true; e.preventDefault(); } return; }
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { if (e.shiftKey) redo(); else undo(); e.preventDefault(); return; }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { if (e.shiftKey) redo(); else if (S.tool === 'cp' && S.pinsLast > 0 && (S.cps.b.length || S.cps.a.length)) takeBackPin(); else undo(); e.preventDefault(); return; }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { redo(); e.preventDefault(); return; }
   if (e.ctrlKey || e.metaKey || e.altKey) return;
-  if (e.key === 'Escape') { draft = []; drag = null; renderDraft(); if (['cp', 'geopin', 'roi'].includes(S.tool)) setTool('select'); return; }
+  // Esc during a move or a reshape puts the mark back as it was when the drag began (the undo step that drag pushed).
+  if (e.key === 'Escape') { const d = drag; draft = []; const c = cancelDrag(); drag = null; if (d && d.pushed) setStatus(c); renderDraft(); if (['cp', 'geopin', 'roi'].includes(S.tool)) setTool('select'); return; }
   if (e.key === 'Enter') { if (S.tool === 'polygon' || S.tool === 'line') finishDraft(); return; }
   // While drawing, Backspace takes back the last corner and never deletes a mark. With the Select tool it deletes the
   // selected mark, as the delete key of a Mac keyboard (which sends Backspace) is expected to.
-  if (e.key === 'Backspace') { if (draft.length) { draft.pop(); renderDraft(); } else if (S.tool === 'select' && S.sel) deleteSelected(); e.preventDefault(); return; }
+  if (e.key === 'Backspace') { if (draft.length) { draft.pop(); renderDraft(); } else if (S.tool === 'select' && S.sel) deleteSelected(); else if (S.tool === 'cp' && (S.cps.b.length || S.cps.a.length)) takeBackPin(); e.preventDefault(); return; }
   if (e.key === 'Delete') { deleteSelected(); e.preventDefault(); return; }
   if (e.key === '[' || e.key === ']') { S.swipe = clamp(S.swipe + (e.key === ']' ? 0.05 : -0.05), 0, 1); renderPanelImages(); return; }
   if (e.key === '0') { fitView('B'); fitView('A'); render(); return; }
@@ -2065,8 +2168,26 @@ function shapeMeasure(sh) {
   if (sh.type === 'line') return ll ? { length_m: G.lengthM(ll) } : { length_px: polyLenPx(px) };
   return {};
 }
+// An area whose outline crosses itself (corners clicked out of order, two patches in one freehand stroke) has parts that
+// cancel out in its area, while the pictures fill them all. A loop run on a little past its start crosses itself too, and
+// its area is right: so the area is compared with what the outline fills, on a small canvas.
+function cancelsOut(pts) {
+  const n = pts.length, o = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]); let crosses = false;
+  for (let i = 0; i < n - 2 && !crosses; i++) for (let j = i + 2; j < n; j++) { if (i === 0 && j === n - 1) continue;
+    const a = pts[i], b = pts[i + 1], c = pts[j], d = pts[(j + 1) % n]; if (o(c, d, a) * o(c, d, b) < 0 && o(a, b, c) * o(a, b, d) < 0) { crosses = true; break; } }
+  if (!crosses) return false;
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity; for (const p of pts) { x0 = Math.min(x0, p[0]); y0 = Math.min(y0, p[1]); x1 = Math.max(x1, p[0]); y1 = Math.max(y1, p[1]); }
+  const k = 256 / Math.max(x1 - x0, y1 - y0, 1e-9), cv2 = document.createElement('canvas'); cv2.width = Math.ceil((x1 - x0) * k) + 2; cv2.height = Math.ceil((y1 - y0) * k) + 2;
+  const ctx = cv2.getContext('2d', { willReadFrequently: true }); ctx.beginPath(); pts.forEach((p, i) => ctx[i ? 'lineTo' : 'moveTo']((p[0] - x0) * k + 1, (p[1] - y0) * k + 1)); ctx.fill();
+  const d = ctx.getImageData(0, 0, cv2.width, cv2.height).data; let filled = 0; for (let i = 3; i < d.length; i += 4) filled += d[i] / 255;
+  filled /= k * k; return Math.abs(filled - polyAreaPx(pts)) > 0.05 * filled;
+}
 function measureText(sh) {
-  const m = shapeMeasure(sh);
+  const m = shapeMeasure(sh), ring = sh.type === 'polygon' && (sh.pts || sh.px);
+  if (ring && ring.length > 3 && cancelsOut(ring)) {   // ADD-2: in picture pixels too, and on other pictures
+    const wrong = 'which is wrong: its outline crosses itself. Delete it and draw it again without crossing';
+    return m.area_m2 !== undefined ? `${num(m.area_m2 / 10000, 2)} ha, ${wrong}` : `${num(m.area_px || 0, 0)} picture pixels, ${wrong}`;
+  }
   if (m.area_m2 !== undefined) return m.area_m2 >= 10000 ? `${num(m.area_m2 / 10000, 2)} ha` : `${num(m.area_m2 / 10000, 2)} ha (${num(m.area_m2, 0)} square metres)`;
   if (m.length_m !== undefined) return `${num(m.length_m, 0)} m long`;
   if (m.area_px !== undefined) return `${num(m.area_px, 0)} picture pixels: put the pictures on the map to get hectares`;
@@ -2082,7 +2203,18 @@ function shortMeasure(sh) {
   return 'point';
 }
 function swatchHTML(c, size) { const s = size || 18; const bg = c.style === 'solid' ? hexToRgba(c.color, 0.35) : c.style === 'hatch' ? `repeating-linear-gradient(45deg, ${c.color} 0 2px, transparent 2px 6px)` : 'transparent'; return `<span class="sw" style="width:${s}px;height:${s}px;border-color:${c.color};background:${bg};${c.style === 'outline' ? 'border-radius:50%' : ''}"></span>`; }
-function centreLL(sh) { const ll = shapeLL(sh); if (!ll) return null; if (sh.type === 'marker') return ll[0]; if (sh.type === 'line') return ll[Math.floor(ll.length / 2)]; let x = 0, y = 0; for (const p of ll) { x += p[0]; y += p[1]; } return [x / ll.length, y / ll.length]; }
+// The one place of a mark (its links, the CSV): a point's own place, the point halfway along a line, and a point inside an
+// area: the average of its corners, or, when that falls outside (an L, a bend), the middle of the area's widest stretch
+// along the parallel through it.
+function centreLL(sh) {
+  const ll = shapeLL(sh); if (!ll) return null; if (sh.type === 'marker') return ll[0];
+  if (sh.type === 'line') { let left = G.lengthM(ll) / 2; for (let i = 1; i < ll.length; i++) { const d = G.lengthM([ll[i - 1], ll[i]]); if (d > 0 && d >= left) { const t = left / d; return [ll[i - 1][0] + t * (ll[i][0] - ll[i - 1][0]), ll[i - 1][1] + t * (ll[i][1] - ll[i - 1][1])]; } left -= d; } return ll[ll.length - 1]; }
+  let x = 0, y = 0; for (const p of ll) { x += p[0]; y += p[1]; } const c = [x / ll.length, y / ll.length], xs = [];
+  for (let i = 0; i < ll.length; i++) { const a = ll[i], b = ll[(i + 1) % ll.length]; if ((a[1] > c[1]) !== (b[1] > c[1])) xs.push(a[0] + (c[1] - a[1]) / (b[1] - a[1]) * (b[0] - a[0])); }
+  xs.sort((p, q) => p - q); let best = null, inside = false;
+  for (let i = 0; i + 1 < xs.length; i += 2) { if (c[0] >= xs[i] && c[0] <= xs[i + 1]) inside = true; if (!best || xs[i + 1] - xs[i] > best[1] - best[0]) best = [xs[i], xs[i + 1]]; }
+  return inside || !best ? c : [(best[0] + best[1]) / 2, c[1]];
+}
 function linksFor(sh) {
   const c = centreLL(sh); if (!c) return '';
   const lat = c[1].toFixed(5), lon = c[0].toFixed(5), s = sh.seen || [], L = LAYERS[layerKey()];
@@ -2096,7 +2228,8 @@ function linksFor(sh) {
     const eid = d => (S.pack.dates.find(x => x.date === d) || {}).esri;
     if (eid(s[0]) && eid(s[1])) out.push(`<a href="https://livingatlas.arcgis.com/sentinel2explorer/#mode=swipe&mainScene=${s[0]}%7C${L.esri}%7C${eid(s[0])}%7C&secondaryScene=${s[1]}%7C${L.esri}%7C${eid(s[1])}%7C&mapCenter=${lon}%2C${lat}%2C15" target="_blank" rel="noopener">Esri swipe</a>`);
   }
-  if (isDate(s[0]) && isDate(s[1])) {
+  if (isDate(s[0]) && isDate(s[1]) && s[0] > s[1]) out.push('<span class="hint">NASA FIRMS and EFFIS need the two Seen between dates in order, the earlier first: check the two dates.</span>');
+  else if (isDate(s[0]) && isDate(s[1])) {
     // FIRMS shows 31 days at most; a longer range is silently cut to one day, which reads as "no fires".
     const day = 86400000, t0 = Date.parse(s[0] + 'T00:00:00Z'), t1 = Date.parse(s[1] + 'T00:00:00Z');
     const iso = t => new Date(t).toISOString().slice(0, 10);
@@ -2144,7 +2277,10 @@ function renderSelection() {
   const lk = linksFor(sh); if ($('selLinks').dataset.html !== lk) { $('selLinks').innerHTML = lk; $('selLinks').dataset.html = lk; }
 }
 function selShape() { return S.shapes.find(s => s.id === S.sel); }
-$('selLabel').addEventListener('change', () => { const sh = selShape(); if (!sh) return; const v = $('selLabel').value.trim(); if (v && v !== sh.label) { pushUndo(); sh.label = v; sh.autoLabel = false; changed(); } });
+$('selLabel').addEventListener('change', () => { const sh = selShape(); if (!sh) return; const v = $('selLabel').value.trim();
+  // An ID names one mark: the sheet, the KMZ and the CSV find a mark by it.
+  if (v && v !== sh.label && S.shapes.some(s => s !== sh && sameId(s.label, v))) { $('selLabel').value = sh.label; setStatus(`${v} is already the ID of another mark, so ${sh.label} keeps its ID. Type another one.`, 'err'); return; }
+  if (v && v !== sh.label) { pushUndo(); sh.label = v; sh.autoLabel = false; changed(); } });
 // A new kind with another letter gives the mark the next ID of that kind, unless the person typed its ID.
 $('selClass').addEventListener('change', () => {
   const sh = selShape(); if (!sh) return; pushUndo(); const v = $('selClass').value, was = getClass(sh.cls), old = sh.label;
@@ -2171,8 +2307,10 @@ $('selNote').addEventListener('input', () => {
 $('selNote').addEventListener('change', () => renderMarkList());
 for (const [id, i] of [['selSeen0', 0], ['selSeen1', 1]]) $(id).addEventListener('change', () => {
   const sh = selShape(); if (!sh) return; const v = cleanDate($(id).value);
-  if ($(id).value && !v) { setStatus('Write the date as YYYY-MM-DD.', 'err'); return; }
+  if ($(id).value && !v) { setStatus('Write a day that exists, as YYYY-MM-DD.', 'err'); return; }
   pushUndo(); sh.seen = (sh.seen || ['', '']).slice(); sh.seen[i] = v; changed();
+  if (sh.seen[0] && sh.seen[1] && sh.seen[1] < sh.seen[0]) setStatus(`${sh.label}: the first picture with the change (${sh.seen[1]}) is older than the last picture without it (${sh.seen[0]}). Check the two dates.`, 'err');
+  else if ($('status').textContent.startsWith(`${sh.label}: the first picture with the change (`) || $('status').textContent === 'Write a day that exists, as YYYY-MM-DD.') setStatus(`${sh.label} seen between ${sh.seen[0] || '?'} and ${sh.seen[1] || '?'}.`, 'ok');   // ADD-4: the warning, or the refusal of a day that does not exist, goes once the dates are right
 });
 /* Dating. With village pictures the After picture is stepped back until the change is gone, then forward one, so the After
    picture on screen is the first that shows the change: the mark is seen between the picture before it and this one.
@@ -2185,7 +2323,9 @@ $('selSeenUse').addEventListener('click', () => {
   let msg = `${sh.label} seen between ${sh.seen[0] || '?'} and ${sh.seen[1] || '?'}.`;
   if (village && !sh.seen[0]) msg += ' This is the earliest picture: the change was already there.';
   if (village && sh.seen[1] && sh.seen[1] <= warEve()) msg += ' It is already there on 28 February 2026, before the war: say so in Notes.';
-  toast(msg); setStatus(msg, 'ok');
+  const flipped = !village && sh.seen[0] && sh.seen[1] && sh.seen[0] > sh.seen[1];
+  if (flipped) msg += ' The before date is later than the after date: check Taken on.';
+  toast(msg); setStatus(msg, flipped ? 'err' : 'ok');
 });
 $('selKeep').addEventListener('click', () => {
   const sh = selShape(); if (!sh) return;
@@ -2220,7 +2360,11 @@ function renderMarkList() {
   if (drafts.length) html += `<details class="more" ${S.openDrafts ? 'open' : ''} id="draftList"><summary>${drafts.length} draft(s) to check</summary>${drafts.slice(0, 300).map(item).join('')}${drafts.length > 300 ? '<div class="hint">Only the first 300 are listed.</div>' : ''}</details>`;
   const box = $('markList'); if (box.dataset.html !== html) { box.innerHTML = html; box.dataset.html = html; const dl = $('draftList'); if (dl) dl.addEventListener('toggle', () => { S.openDrafts = dl.open; }); }
 }
-$('markList').addEventListener('click', e => { const row = e.target.closest('.mark'); if (!row) return; const sh = S.shapes.find(s => s.id === +row.dataset.mid); if (!sh) return; S.sel = sh.id; if (S.tool !== 'select') setTool('select'); if (sh.pts) zoomTo(sh); else { render(); setStatus(`${sh.label} is on ${sh.homeTitle || 'other pictures'}: open them to see it.`); } });
+// A box of the selected mark still being typed in is written when it loses the focus, which rebuilt the list under the
+// press, so a click on another row was lost: the press keeps the focus, and the click writes the box before it selects.
+const MARK_BOXES = ['selLabel', 'selSeen0', 'selSeen1', 'selNote'];
+$('markList').addEventListener('mousedown', e => { const a = document.activeElement; if (e.button === 0 && e.target.closest('.mark') && a && MARK_BOXES.includes(a.id)) e.preventDefault(); });
+$('markList').addEventListener('click', e => { const row = e.target.closest('.mark'); if (!row) return; const a = document.activeElement; if (a && MARK_BOXES.includes(a.id)) a.blur(); const sh = S.shapes.find(s => s.id === +row.dataset.mid); if (!sh) return; S.sel = sh.id; if (S.tool !== 'select') setTool('select'); if (sh.pts) zoomTo(sh); else { render(); setStatus(`${sh.label} is on ${sh.homeTitle || 'other pictures'}: open them to see it.`); } });
 
 /* ---------- kinds ---------- */
 function renderKindChips() {
@@ -2273,6 +2417,7 @@ function updateFindUI() {
 }
 async function runAnalysis() {
   if (!aligned()) return setStatus(S.B && S.A ? 'Line up the two pictures first (step 2).' : 'Load both pictures first.', 'err');
+  if (S.warped && !S.warped.bbox) return setStatus('The two pictures share no ground, so there is nothing to compare: check that both show the same place, and their world files or line-up.', 'err');   // before the library loads: nothing to search
   try { await ensureCV(); } catch (e) { return setStatus(e.message, 'err'); }
   setStatus('Looking for changes...'); await tick();
   try {
@@ -2294,7 +2439,8 @@ async function runAnalysis() {
     bump();
     buildHeat(res); S.sel = null; S.openDrafts = true; changed();
     const n = res.features.length + res.markers.length;
-    setStatus(n ? `Found ${n} draft(s). Check each one on the pictures: keep it with a kind, or delete it.` : 'No change found at this sensitivity. Try a higher sensitivity or a smaller size.', 'ok');
+    const al = S.alignInfo || {}, weak = Number.isFinite(al.score) && al.score < 0.2, part = sharedPart(), sliver = part < 0.1;   // a bad line-up shows up as change
+    setStatus((sliver ? `The two pictures share only ${pctText(part)} of the before picture: check that both show the same place before you trust these drafts. ` : '') + (weak ? `The line-up is rated ${al.score >= 0.12 ? 'uncertain' : 'poor'}: check it with the Checkerboard view before you trust these drafts. ` : '') + (n ? `Found ${n} draft(s). Check each one on the pictures: keep it with a kind, or delete it.` : 'No change found at this sensitivity. Try a higher sensitivity or a smaller size.'), weak || sliver ? 'err' : 'ok');
   } catch (e) { console.error(e); setStatus('Find changes stopped: ' + (e.message || e), 'err'); }
 }
 function buildHeat(res) {
@@ -2371,7 +2517,7 @@ function docDescription() {
 function placemark(sh) {
   const c = getClass(sh.cls), g = geomOf(sh), p = propsOf(sh);
   const rows = [['Kind', p.kind], ['What you saw', p.note], ['Seen between', p.seen_between], ['Area', p.area_ha !== undefined ? p.area_ha + ' ha' : ''], ['Length', p.length_m !== undefined ? p.length_m + ' m' : ''], ['Drawn on', p.drawn_on], ['Before picture', p.before_picture], ['After picture', p.after_picture], ['Found by', p.found_by]].filter(r => r[1] !== '' && r[1] !== undefined);
-  const table = '<table>' + rows.map(([k, v]) => `<tr><th style="text-align:left;padding:2px 10px 2px 0;vertical-align:top">${esc(k)}</th><td>${esc(v)}</td></tr>`).join('') + '</table>';
+  const table = '<table>' + rows.map(([k, v]) => `<tr><th style="text-align:left;padding:2px 10px 2px 0;vertical-align:top">${esc(k)}</th><td>${esc(v).replace(/\r\n?|[\n\u2028\u2029]/g, '<br>')}</td></tr>`).join('') + '</table>';
   const s = sh.seen || [];
   const time = isDate(s[1]) ? `<TimeSpan><begin>${s[1]}</begin></TimeSpan>` : '';
   const ext = Object.entries(p).map(([k, v]) => `<Data name="${G.xmlEsc(k)}"><value>${G.xmlEsc(v)}</value></Data>`).join('');
@@ -2432,10 +2578,17 @@ async function exportKMZ() {
   } catch (e) { console.error(e); setStatus('The KMZ could not be made: ' + (e.message || e), 'err'); }
 }
 function csvCell(v) { const s = v == null ? '' : String(v); return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
+// Excel reads a cell that starts with = + - or @ as a formula ("- roof gone" shows #NAME?), and one such as 12-3, 3/4, 007
+// or 1E5 as a date or a number. A zero-width space in front keeps the text as typed there, and shows as nothing (an
+// apostrophe would show, and so would a tab).
+// Excel reads a cell starting with = + - @ as a formula, and turns numbers, percentages, (12), TRUE and FALSE, and day and
+// month names (12 May, Jan-5) into numbers, truth values and dates: such a cell starts with a zero-width space, shown as nothing.
+const XL_MON = '(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\\.?', XL_CONVERTS = new RegExp(`^[=+\\-@]|^[\\d\\s.,:/eE+%()$-]+$|^(true|false)$|^\\d{1,2}[\\s/.-]*${XL_MON}([\\s/.-]*\\d{2,4})?$|^${XL_MON}[\\s/.-]*\\d{1,4}([\\s,/.-]+\\d{2,4})?$`, 'i');
+function xlText(v) { const s = v == null ? '' : String(v); return s.trim() && XL_CONVERTS.test(s) ? '\u200B' + s : s; }
 function exportCSV() {
   const shapes = exportShapes(); if (!shapes.length) return setStatus('Nothing to export yet: draw a mark, or keep a draft.', 'err');
   const head = ['ID', 'Kind', 'Sheet tab', 'Seen between', 'What you saw', 'Area (ha)', 'Length (m)', 'Latitude', 'Longitude', 'Shape (GeoJSON)'];
-  const rows = shapes.map(sh => { const p = propsOf(sh), c = centreLL(sh); return [sh.label, p.kind, p.sheet_tab, p.seen_between, p.note, p.area_ha !== undefined ? p.area_ha : '', p.length_m !== undefined ? p.length_m : '', c ? r6(c[1]) : '', c ? r6(c[0]) : '', shapeLL(sh) ? sheetFeature(sh) : '']; });
+  const rows = shapes.map(sh => { const p = propsOf(sh), c = centreLL(sh); return [xlText(sh.label), xlText(p.kind), xlText(p.sheet_tab), p.seen_between, xlText(p.note), p.area_ha !== undefined ? p.area_ha : '', p.length_m !== undefined ? p.length_m : '', c ? r6(c[1]) : '', c ? r6(c[0]) : '', shapeLL(sh) ? sheetFeature(sh) : '']; });
   const csv = '﻿' + [head].concat(rows).map(r => r.map(csvCell).join(',')).join('\r\n') + '\r\n';
   download(fileBase() + '_marks.csv', new Blob([csv], { type: 'text/csv;charset=utf-8' }));
   setStatus(`CSV saved with ${shapes.length} row(s): a list of your marks to keep. Do not import it into the group sheet, where it would map every mark twice; add each mark there with Copy for the sheet.`, 'ok');
@@ -2505,19 +2658,40 @@ async function exportPNG(which) {
     const x0 = Math.max(0, Math.min(...cs.map(p => p[0]))), y0 = Math.max(0, Math.min(...cs.map(p => p[1]))), x1 = Math.min(S.A.w, Math.max(...cs.map(p => p[0]))), y1 = Math.min(S.A.h, Math.max(...cs.map(p => p[1]))); regA = { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }; }
   const pw = Math.round((nativeA ? regA.w : region.w) * scale), ph = Math.round((nativeA ? regA.h : region.h) * scale), gap = which === 'both' ? Math.round(16 * scale) : 0;
   const W = pw * panels.length + gap * (panels.length - 1);
-  const lg = $('expLegend').checked ? legendCanvas(W, scale, shapes) : null, cap = captionCanvas(W, scale, which === 'both' ? 'both' : which);
+  // A mark wholly outside the part shown is not in the picture: it is left out of the legend too, and named in the status.
+  // PNG after As taken holds the after picture's own grid: there a mark is tested where it lands on that picture (ADD-1).
+  const hits = (b, r) => b.x <= r.x + r.w && b.x + b.w >= r.x && b.y <= r.y + r.h && b.y + b.h >= r.y;
+  const onA = b => { const cs = [[b.x, b.y], [b.x + b.w, b.y], [b.x, b.y + b.h], [b.x + b.w, b.y + b.h]].map(p => C.apply(S.M, p[0], p[1])), xs = cs.map(p => p[0]), ys = cs.map(p => p[1]);
+    return { x: Math.min(...xs), y: Math.min(...ys), w: Math.max(...xs) - Math.min(...xs), h: Math.max(...ys) - Math.min(...ys) }; };
+  // A line or an area is in the picture when a stretch of it crosses the part shown (the box of a road can touch it while the
+  // road does not), or, for an area, when it holds the whole part; a point by its circle's box. 2 px of slack for the stroke.
+  const cuts = (a, b, r) => { let t0 = 0, t1 = 1; const dx = b[0] - a[0], dy = b[1] - a[1];
+    for (const [p, q] of [[-dx, a[0] - r.x], [dx, r.x + r.w - a[0]], [-dy, a[1] - r.y], [dy, r.y + r.h - a[1]]]) { if (p === 0) { if (q < 0) return false; } else { const t = q / p; if (p < 0) { if (t > t1) return false; t0 = Math.max(t0, t); } else { if (t < t0) return false; t1 = Math.min(t1, t); } } }
+    return true; };
+  const holds = (P, c) => { let k = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++) if ((P[i][1] > c[1]) !== (P[j][1] > c[1]) && c[0] < (P[j][0] - P[i][0]) * (c[1] - P[i][1]) / (P[j][1] - P[i][1]) + P[i][0]) k = !k; return k; };
+  const meets = (s, r, T) => { if (s.type === 'marker') return hits(T === null ? shapeBBox(s) : onA(shapeBBox(s)), r);
+    const P = s.pts.map(p => T ? T(p) : p), R = { x: r.x - 2, y: r.y - 2, w: r.w + 4, h: r.h + 4 }, closed = s.type !== 'line';
+    for (let i = 0; i < P.length; i++) { const j = i + 1 < P.length ? i + 1 : closed ? 0 : i; if (cuts(P[i], P[j], R)) return true; }
+    return closed && holds(P, [r.x + r.w / 2, r.y + r.h / 2]); };
+  const drawn = nativeA && !S.M ? [] : shapes, inside = s => nativeA ? meets(s, regA, p => C.apply(S.M, p[0], p[1])) : meets(s, region, null);
+  const shown = drawn.filter(inside), out = drawn.filter(s => !inside(s));
+  const lg = $('expLegend').checked ? legendCanvas(W, scale, shown) : null, cap = captionCanvas(W, scale, which === 'both' ? 'both' : which);
   const c = document.createElement('canvas'); c.width = W; c.height = ph + (lg ? lg.height : 0) + cap.height; const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
   panels.forEach((k, i) => {
     const dx = i * (pw + gap);
+    ctx.save(); ctx.beginPath(); ctx.rect(dx, 0, pw, ph); ctx.clip();   // a panel holds only its own ground: a mark beyond its edge is cut there, never drawn on the other panel
     if (k === 'B') { ctx.drawImage(S.B.img, region.x, region.y, region.w, region.h, dx, 0, pw, ph); drawShapesCanvas(ctx, p => [(p[0] - region.x) * scale + dx, (p[1] - region.y) * scale], scale, shapes); }
     else if (nativeA) { ctx.drawImage(S.A.img, regA.x, regA.y, regA.w, regA.h, dx, 0, pw, ph); if (S.M) drawShapesCanvas(ctx, p => { const q = C.apply(S.M, p[0], p[1]); return [(q[0] - regA.x) * scale + dx, (q[1] - regA.y) * scale]; }, scale, shapes, C.decompose(S.M).scaleX); }
     else if (aligned()) { ctx.drawImage(S.warped.img, region.x, region.y, region.w, region.h, dx, 0, pw, ph); drawShapesCanvas(ctx, p => [(p[0] - region.x) * scale + dx, (p[1] - region.y) * scale], scale, shapes); }
-    else ctx.drawImage(S.A.img, 0, 0, S.A.w, S.A.h, dx, 0, pw, ph);
+    else { const f = Math.min(pw / S.A.w, ph / S.A.h), w = S.A.w * f, h = S.A.h * f; ctx.drawImage(S.A.img, 0, 0, S.A.w, S.A.h, dx + (pw - w) / 2, (ph - h) / 2, w, h); }   // not lined up: in its own proportions, as As taken shows it
+    ctx.restore();
   });
   if (lg) ctx.drawImage(lg, 0, ph);
   ctx.drawImage(cap, 0, ph + (lg ? lg.height : 0));
   c.toBlob(b => download(`${fileBase()}_${which === 'both' ? 'before_after' : which === 'B' ? 'before' : 'after'}.png`, b), 'image/png');
-  setStatus(S.roi ? 'PNG saved, cut to your search box (Use the whole picture, under the PNG buttons, to export all of it).' : 'PNG saved.', 'ok');
+  const lead = S.roi ? 'PNG saved, cut to your search box (Use the whole picture, under the PNG buttons, to export all of it).' : out.length && S.warped && region === S.warped.bbox ? 'PNG saved, cut to the part both pictures show.' : 'PNG saved.';
+  const left = !out.length ? '' : ` ${out.length === 1 ? '1 mark' : out.length + ' marks'} outside ${lead === 'PNG saved.' ? 'the picture' : 'it'} ${out.length === 1 ? 'was' : 'were'} left out: ${out.slice(0, 10).map(s => s.label).join(', ')}${out.length > 10 ? ` and ${out.length - 10} more` : ''}.`;
+  setStatus(lead + left, 'ok');
 }
 function svgString(k, embed) {
   const im = S[k], native = (k === 'A'); const T = native ? (p => C.apply(S.M, p[0], p[1])) : (p => p);
@@ -2576,7 +2750,7 @@ function pendingText() {
 }
 // Where the marks that are not on the pictures on screen were drawn (of `list`, or of every mark), and how to see them there.
 function whereText(list, withPending = !list) {
-  const cur = frameId(), p = S.pending, wait = p && p.B && !p.done.B ? `own:${p.B.name}:${p.B.w}x${p.B.h}` : '', back = pendingBack(), groups = new Map();
+  const cur = frameId(), p = S.pending, wait = p && p.B && !p.done.B ? `own:${p.B.name}:${p.B.w}x${p.B.h}${p.B.sig ? ':' + p.B.sig : ''}` : '', back = pendingBack(), groups = new Map();
   let named = false;
   for (const s of list || S.shapes) {
     const h = s.home || ''; if (!h || h === cur) continue;
@@ -2597,7 +2771,7 @@ function projectJSON() {
   const P = S.pending, wait = k => !!(P && P[k] && !P.done[k] && !S[k]);   // saved work still waiting for its pictures
   return { app: 'change-marker', version: 3, saved_at: new Date().toISOString(), title: titleOf(),
     source: S.source, pack: S.source === 'pack' && S.pack && S.B && S.B.packKey ? { key: S.packKey, layer: S.packLayer, before: S.B.date, after: S.A ? S.A.date : '' } : null,
-    before: S.B ? { name: S.B.name, w: S.B.w, h: S.B.h, date: S.B.date } : (wait('B') ? P.B : null), after: S.A ? { name: S.A.name, w: S.A.w, h: S.A.h, date: S.A.date } : (wait('A') ? P.A : null),
+    before: S.B ? { name: S.B.name, w: S.B.w, h: S.B.h, date: S.B.date, sig: S.B.sig || undefined } : (wait('B') ? P.B : null), after: S.A ? { name: S.A.name, w: S.A.w, h: S.A.h, date: S.A.date, sig: S.A.sig || undefined } : (wait('A') ? P.A : null),
     own_layer: $('ownLayer').value, geo: { B: geoOut(S.geo.B || (wait('B') ? P.geo.B : null)), A: geoOut(S.geo.A || (wait('A') ? P.geo.A : null)) },
     geoPins: (S.geoPins.length || !wait('B') ? S.geoPins : P.pins || []).map(g => ({ p: g.p, ll: g.ll, text: g.text, err: g.err })),
     before_to_after_affine: S.M || (P && P.M) || null, roi: S.roi, controlPoints: S.cps, kindSet: S.kindSet, classes: S.classes, counters: S.counters,
@@ -2615,11 +2789,16 @@ function frameOfFile(j) {
 }
 function shapesFromFile(j) {
   const f = frameOfFile(j);
-  return (j.shapes || []).filter(s => s.before_px && s.before_px.length).map(s => ({
+  const list = (j.shapes || []).filter(s => s.before_px && s.before_px.length).map(s => ({
     id: s.id, uid: s.uid || newUid(), label: s.label || '', autoLabel: s.auto_label, type: s.type === 'marker' ? 'marker' : (s.type === 'line' ? 'line' : 'polygon'), cls: s.cls,
     source: s.source || 'manual', kept: s.kept !== undefined ? !!s.kept : s.source !== 'auto', note: s.note || '', seen: (s.seen || ['', '']).slice(0, 2), r: s.r || 12,
     home: s.frame || f.id, homeTitle: s.frame_title || f.title, px: s.before_px.map(p => [p[0], p[1]]),
     ll: Array.isArray(s.lonlat) && s.lonlat.length === s.before_px.length ? s.lonlat.map(q => [q[0], q[1]]) : null }));
+  // Work saved before own pictures were known by content names them by file name and size: its marks belong to the own
+  // before picture on screen of that name and size, as they do when that picture is dropped after it (setPicture).
+  const bare = S.B && S.B.sig ? `own:${S.B.name}:${S.B.w}x${S.B.h}` : '';
+  if (bare) for (const s of list) if (s.home === bare) s.home = S.B.frame;
+  return list;
 }
 // Known kinds take their letter and sheet tab from this page; any other kind goes to the Other changes tab.
 function normalizeKinds(classes) {
@@ -2666,7 +2845,7 @@ async function restoreProject(j, zip) {
         const f = `files/${k === 'B' ? 'before' : 'after'}.jpg`, meta = j[k === 'B' ? 'before' : 'after'] || {};
         const url = await readAsDataURL(new Blob([bytes[k]], { type: 'image/jpeg' })), im = await loadImg(url);
         if (k === 'B') S.geoPins = [];
-        setPicture(k, { name: meta.name || f, url, img: im, date: meta.date || '' });
+        setPicture(k, { name: meta.name || f, url, img: im, date: meta.date || '', sig: meta.sig });   // the KMZ's copy of a saved picture is that picture
         $('date' + k).value = meta.date || ''; $('date' + k).classList.toggle('need', !meta.date); $('name' + k).textContent = meta.name || f; $('drop' + k).classList.add('loaded'); pics = true;
       }
       fitView('B'); fitView('A'); refreshAlignment();
@@ -2723,7 +2902,7 @@ function adoptPlacement(j, newer) {
       // Bring them back: an older kept set gave these pictures, which had no placement of their own as it began, what it
       // holds (and keeps the rest for its pictures not on screen yet). A newer set that names each of them gives what it
       // holds instead, and what it does not hold stays as the older set gave it.
-      const fit = (m, r) => !!m && !!r && m.name === r.name && m.w === r.w && m.h === r.h, rest = S.pending && pendingBack() ? S.pending : null;
+      const fit = (m, r) => !!m && !!r && m.name === r.name && m.w === r.w && m.h === r.h && (!m.sig || !r.sig || m.sig === r.sig), rest = S.pending && pendingBack() ? S.pending : null;
       const all = ['B', 'A'].every(k => !S[k] || S[k].packKey || fit(w[k === 'B' ? 'before' : 'after'], S[k]));
       if (!(newer && bareDates && all && (!rest || (rest !== bareDates.was && (fit(w.before, rest.B) || fit(w.after, rest.A)))))) return false;
       const here = k => S[k] && !S[k].packKey ? { name: S[k].name, w: S[k].w, h: S[k].h, date: S[k].date } : null;
@@ -2791,15 +2970,18 @@ function ask(box, text, choices) {
   });
 }
 const ADD_OR_REPLACE = [{ v: 'add', label: 'Add these marks to yours' }, { v: 'replace', label: 'Replace yours' }];
+// A file that cannot be read as saved work (damaged, cut short, or not JSON) is said in plain words, not the parser's.
+function readWork(t) { try { return JSON.parse(t); } catch (e) { throw new Error('This file could not be read as saved work: it may be damaged or cut short.'); } }
 async function openWork(file) {
   try {
     let j, zip = null;
     if (/\.kmz$/i.test(file.name)) {
       zip = G.readZip(await file.arrayBuffer()); const txt = await zip.text('change-marker.json');
       if (!txt) throw new Error('This KMZ was not saved by Change Marker. To use its picture, drop it on the Before or After box.');
-      j = JSON.parse(txt);
-    } else j = JSON.parse(await file.text());
+      j = readWork(txt);
+    } else j = readWork(await file.text());
     if (!j || j.app !== 'change-marker') throw new Error('This is not a Change Marker file.');
+    if (j.shapes !== undefined && !(Array.isArray(j.shapes) && j.shapes.every(s => s && typeof s === 'object' && (s.before_px === undefined || Array.isArray(s.before_px))))) throw new Error('This file could not be read as saved work: it may be damaged or cut short.');
     let how = 'replace';
     if (S.shapes.length) {
       setStatus('Add the marks of this file to yours, or replace yours? (see Your work, below)');
@@ -2821,10 +3003,26 @@ $('fileWork').addEventListener('change', () => { const f = $('fileWork').files[0
 const AUTOSAVE_KEY = 'change-marker:autosave:v2', AUTOSAVE_PREFIX = AUTOSAVE_KEY + ':';
 const VISIT_KEY = AUTOSAVE_PREFIX + 'visit:' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 let saveTimer = 0, holdSaves = false;   // holdSaves: while kept sets are being brought back, nothing is written
+let otherTab = false;   // the page open in another tab wrote the main key: this tab keeps its marks under VISIT_KEY from then on
 let bareDates = null;   // Bring them back: the Taken on dates of the pictures on screen as it began, when they had no placement
+// Storage refused or full: the note under the banner says so, and the status too the first time (on a phone the note is
+// far down the page).
+const gone = new Map(); let written = new Set();   // gone: uid of a mark this tab kept and took off the screen, and when
+function keptJSON(key) {
+  const j = projectJSON(), now = new Set(S.shapes.map(s => s.uid));
+  if (!S.offer) for (const u of written) if (!now.has(u) && !gone.has(u)) gone.set(u, j.saved_at);
+  for (const u of now) gone.delete(u); written = now;
+  if (gone.size) {   // only the marks another kept set still holds need naming
+    const held = new Set();
+    try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k !== key && k !== VISIT_KEY && k.startsWith(AUTOSAVE_KEY)) { const o = JSON.parse(localStorage.getItem(k) || 'null'); for (const m of (o && Array.isArray(o.shapes) && o.shapes) || []) held.add(m && m.uid); } } } catch (e) { /* blocked or unreadable */ }
+    const dead = [...gone].filter(([u]) => held.has(u)).map(([uid, at]) => ({ uid, at })); if (dead.length) j.deleted = dead;
+  }
+  return j;
+}
+function noKeep() { const n = $('keepNote'); if (n.hidden) { n.hidden = false; setStatus(n.textContent, 'err'); } }
 function writeAutosave() {
   saveTimer = 0;
-  try { const key = S.offer ? VISIT_KEY : AUTOSAVE_KEY; if (!S.shapes.length) localStorage.removeItem(key); else localStorage.setItem(key, JSON.stringify(projectJSON())); } catch (e) { /* storage blocked or full */ }
+  try { const key = S.offer || otherTab ? VISIT_KEY : AUTOSAVE_KEY, j = keptJSON(key); if (!S.shapes.length && !j.deleted) localStorage.removeItem(key); else localStorage.setItem(key, JSON.stringify(j)); } catch (e) { noKeep(); }
 }
 function scheduleAutosave() {
   clearTimeout(saveTimer); saveTimer = 0; if (holdSaves) return;
@@ -2834,8 +3032,15 @@ function scheduleAutosave() {
 function flushAutosave() { if (saveTimer && !holdSaves) { clearTimeout(saveTimer); writeAutosave(); } }
 window.addEventListener('pagehide', flushAutosave);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushAutosave(); });
+// The page open in another tab of this browser wrote or removed the main key: this tab's marks go under its own key, now and
+// from then on, so that neither tab writes over the other's. The next visit offers every set. Another tab that removed this
+// tab's own key (Start fresh or Bring them back there) has it written again: the marks on screen here are kept.
+window.addEventListener('storage', e => {
+  if (e.key === AUTOSAVE_KEY) otherTab = true; else if (e.key !== VISIT_KEY || !(S.offer || otherTab)) return;
+  if (!holdSaves) { clearTimeout(saveTimer); writeAutosave(); }
+});
 // Write the marks on screen under the main key now; false if the browser refused.
-function saveNow() { clearTimeout(saveTimer); saveTimer = 0; try { if (!S.shapes.length) localStorage.removeItem(AUTOSAVE_KEY); else localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(projectJSON())); return true; } catch (e) { return false; } }
+function saveNow() { clearTimeout(saveTimer); saveTimer = 0; try { const j = keptJSON(AUTOSAVE_KEY); if (!S.shapes.length && !j.deleted) localStorage.removeItem(AUTOSAVE_KEY); else localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(j)); otherTab = false; return true; } catch (e) { noKeep(); return false; } }
 function changed() { bump(); render(); scheduleAutosave(); }
 function readStored(key) { try { const j = JSON.parse(localStorage.getItem(key) || 'null'); return j && j.shapes && j.shapes.length ? j : null; } catch (e) { return null; } }
 function whenText(j) { return j.saved_at ? new Date(j.saved_at).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) : ''; }
@@ -2846,11 +3051,16 @@ function storedSets() {
   const main = readStored(AUTOSAVE_KEY); if (main) sets.push({ key: AUTOSAVE_KEY, j: main });
   try {
     for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith(AUTOSAVE_PREFIX) && k !== VISIT_KEY) extra.push(k); }
-  } catch (e) { return sets; }
-  for (const k of extra) { const j = readStored(k); if (j) sets.push({ key: k, j }); else removeKeys([k]); }
+  } catch (e) { noKeep(); return sets; }
+  // A mark a tab deleted stays deleted where another tab kept a copy of it no later; a set left with no mark is not offered.
+  const dead = new Map(), raw = k => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
+  for (const k of [AUTOSAVE_KEY].concat(extra)) { const o = raw(k); for (const d of (o && Array.isArray(o.deleted) && o.deleted) || []) if (d && d.uid && String(d.at || '') > String(dead.get(d.uid) || '')) dead.set(d.uid, String(d.at || '')); }
+  const live = j => { if (dead.size) j.shapes = j.shapes.filter(m => !(m && m.uid && dead.has(m.uid) && String(j.saved_at || '') <= dead.get(m.uid))); return j.shapes.length ? j : null; };
+  if (sets[0] && !live(sets[0].j)) sets.shift();
+  for (const k of extra) { const j = readStored(k); if (j && live(j)) sets.push({ key: k, j }); else if (!j && !(raw(k) || {}).deleted) removeKeys([k]); }
   const first = sets[0] && sets[0].key === AUTOSAVE_KEY ? sets.shift() : null;
   sets.sort((a, b) => String(a.j.saved_at || '').localeCompare(String(b.j.saved_at || '')));
-  return first ? [first].concat(sets) : sets;
+  const out = first ? [first].concat(sets) : sets; out.keys = extra; return out;   // keys: every other kept key, gone once the question is answered
 }
 function checkAutosave() {
   const sets = storedSets(); if (!sets.length) return;
@@ -2866,7 +3076,7 @@ function checkAutosave() {
   }
   const names = Object.keys(where), parts = names.map(t => `${t} (${where[t]})`);
   const place = parts.length > 1 ? parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1] : (names[0] || titled);
-  b.innerHTML = `<div>You have ${j.shapes.length} mark(s) from ${esc(whenText(j))}, on ${esc(place)}.${more.length ? ` And ${esc(more.map(s => `${s.j.shapes.length} mark(s) from ${whenText(s.j)}`).join(', '))}, kept while an earlier question was waiting.` : ''}</div><div class="row"><button class="small primary" id="bnRestore">Bring them back</button><button class="small" id="bnFresh">Start fresh</button></div>`;
+  b.innerHTML = `<div>You have ${j.shapes.length} mark(s) from ${esc(whenText(j))}, on ${esc(place)}.${more.length ? ` And ${esc(more.map(s => `${s.j.shapes.length} mark(s) from ${whenText(s.j)}`).join(', '))}, kept while an earlier question was waiting, or in another tab.` : ''}</div><div class="row"><button class="small primary" id="bnRestore">Bring them back</button><button class="small" id="bnFresh">Start fresh</button></div>`;
   b.hidden = false;
   $('bnRestore').onclick = () => bringBack();
   $('bnFresh').onclick = async () => {
@@ -2874,7 +3084,7 @@ function checkAutosave() {
     const v = await ask($('banner'), `Delete the ${n} kept mark(s) for good? They cannot be brought back.`, [{ v: 'yes', label: 'Delete them' }, { v: 'cancel', label: 'Keep them' }]);
     if (v !== 'yes') return checkAutosave();
     closeOffer();
-    removeKeys(o.sets.map(s => s.key));
+    removeKeys(o.sets.map(s => s.key).concat(o.sets.keys || []));
     if (saveNow()) removeKeys([VISIT_KEY]);
     setStatus('Started fresh: the marks kept in this browser are gone.' + (S.shapes.length ? ' The marks on screen are kept.' : ''));
   };
@@ -2932,7 +3142,7 @@ async function bringBack() {
     setStatus(how === 'add' ? addedText(Object.assign({}, added, { renamed: ids, again: updated.size })) : restoredText(pics, ids, updated.size), 'ok');
     // Every set is now on screen: keep them under the main key, and only then drop the others.
     holdSaves = false; bareDates = null;
-    if (saveNow()) removeKeys(o.sets.map(s => s.key).filter(k => k !== AUTOSAVE_KEY).concat([VISIT_KEY]));
+    if (saveNow()) removeKeys(o.sets.map(s => s.key).concat(o.sets.keys || []).filter(k => k !== AUTOSAVE_KEY).concat([VISIT_KEY]));
   } catch (e) {
     // Nothing kept is lost: the sets stay where they were and the banner offers them again.
     console.error(e); holdSaves = false; bareDates = null; checkAutosave(); setStatus(e.message || String(e), 'err');
@@ -2953,7 +3163,7 @@ $('btnTheme').addEventListener('click', () => {
 window.CM = { S, G, C, choosePack, setMode, setTool, addShape, projectJSON, exportGeoJSONText: () => JSON.stringify({ type: 'FeatureCollection', features: mapShapes().map(sh => ({ type: 'Feature', properties: propsOf(sh), geometry: geomOf(sh) })) }),
   kmlText: () => kmlDoc(mapShapes(), [overlayFor('B'), overlayFor('A')].filter(Boolean)), sheetFeature, bpxToLL, llToBpx, hasGeo, render, restoreProject, mergeProject, frameId, ensureSync, measureText };
 initPackUI(); setSource(CAT ? 'pack' : 'own'); updateCpInfo(); updateGeoState(); updateFindUI(); setTool('select'); applyMode(); render(); checkAutosave();
-if (CAT) setStatus('Pick a village under Pictures (step 1) to open its pictures, or switch to Your own pictures.');
+if (CAT && $('keepNote').hidden) setStatus('Pick a village under Pictures (step 1) to open its pictures, or switch to Your own pictures.');   // else the status says marks are not kept
 })();
 </script>
 </body>
